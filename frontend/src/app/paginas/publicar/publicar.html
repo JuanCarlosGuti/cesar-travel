@@ -5,7 +5,7 @@
       {{
         edicion()
           ? 'Actualizá los datos y las fotos de tu alojamiento.'
-          : 'Contale al mundo cómo es tu alojamiento en el Cesar o La Guajira.'
+          : 'Contale al mundo cómo es tu alojamiento, en cualquier municipio de Colombia.'
       }}
     </p>
   </header>
@@ -54,13 +54,31 @@
         </label>
 
         <label class="campo">
-          <span>Municipio</span>
-          <select formControlName="municipioId">
-            <option [ngValue]="null" disabled>Elegí un municipio</option>
-            @for (municipio of municipios(); track municipio.id) {
-              <option [ngValue]="municipio.id">
-                {{ municipio.nombre }}, {{ municipio.departamento }}
+          <span>Departamento</span>
+          <select #selDepartamento (change)="elegirDepartamento(selDepartamento.value)">
+            <option value="" [selected]="departamentoId() === null" disabled>
+              Elegí un departamento
+            </option>
+            @for (departamento of departamentos(); track departamento.id) {
+              <option [value]="departamento.id" [selected]="departamento.id === departamentoId()">
+                {{ departamento.nombre }}
               </option>
+            }
+          </select>
+        </label>
+
+        <label class="campo campo-ancho">
+          <span>Municipio</span>
+          <!-- `attr.disabled` en vez de `[disabled]`: bloquea el select sin deshabilitar el
+               control, que si no quedaría fuera de la validación y el municipio dejaría de ser
+               obligatorio. -->
+          <select
+            formControlName="municipioId"
+            [attr.disabled]="departamentoId() === null ? '' : null"
+          >
+            <option [ngValue]="null" disabled>{{ avisoMunicipio() }}</option>
+            @for (municipio of municipios(); track municipio.id) {
+              <option [ngValue]="municipio.id">{{ etiquetaMunicipio(municipio) }}</option>
             }
           </select>
           @if (

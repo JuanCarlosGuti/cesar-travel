@@ -7,6 +7,7 @@ import { Usuario } from './auth/entidades/usuario.entity';
 import { CatalogoModule } from './catalogo/catalogo.module';
 import { Caracteristica } from './catalogo/entidades/caracteristica.entity';
 import { Categoria } from './catalogo/entidades/categoria.entity';
+import { Departamento } from './catalogo/entidades/departamento.entity';
 import { Municipio } from './catalogo/entidades/municipio.entity';
 import { ChatModule } from './chat/chat.module';
 import { DatabaseModule } from './database/database.module';
@@ -32,7 +33,14 @@ import { ReservasModule } from './reservas/reservas.module';
     ResenasModule,
     ChatModule,
     // Repositorios que necesita el seed.
-    TypeOrmModule.forFeature([Usuario, Municipio, Categoria, Caracteristica, Propiedad]),
+    TypeOrmModule.forFeature([
+      Usuario,
+      Departamento,
+      Municipio,
+      Categoria,
+      Caracteristica,
+      Propiedad,
+    ]),
   ],
   providers: [SeedService],
 })

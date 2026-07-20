@@ -53,6 +53,21 @@ export class PropiedadDto {
   politicaCancelacion?: string;
 }
 
+/**
+ * El municipio se aplana: el departamento viaja como texto y no como objeto anidado,
+ * que es lo único que muestran las vistas ("Palomino, La Guajira").
+ */
+function aUbicacion(municipio: Propiedad['municipio']) {
+  return {
+    id: municipio.id,
+    nombre: municipio.nombre,
+    departamento: municipio.departamento?.nombre ?? '',
+    tipo: municipio.tipo,
+    latitud: municipio.latitud,
+    longitud: municipio.longitud,
+  };
+}
+
 /** Tarjeta del catálogo: lo mínimo para listar sin arrastrar la galería completa. */
 export function aResumen(propiedad: Propiedad) {
   return {
@@ -62,7 +77,7 @@ export function aResumen(propiedad: Propiedad) {
     habitaciones: propiedad.habitaciones,
     banos: propiedad.banos,
     categoria: propiedad.categoria,
-    municipio: propiedad.municipio,
+    municipio: aUbicacion(propiedad.municipio),
     imagenPortada: propiedad.imagenes?.[0]?.url ?? propiedad.categoria?.imagenUrl ?? null,
     duenioId: propiedad.duenio?.id ?? null,
   };

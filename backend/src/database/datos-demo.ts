@@ -1,10 +1,9 @@
 /**
  * Catálogo de demostración — Cesar y La Guajira.
  *
- * Portado del proyecto original de microservicios (mismos municipios, propiedades e
- * imágenes). El alcance territorial es deliberado: la plataforma es local/departamental,
- * por eso hay municipio + departamento y no país. Agregar municipios vecinos es
- * simplemente añadirlos a MUNICIPIOS y usar su nombre en alguna propiedad.
+ * Las ubicaciones seleccionables en toda la aplicación son los 1.122 municipios de
+ * Colombia (DIVIPOLA del DANE, en datos/divipola.json) más los destinos turísticos de
+ * abajo; este archivo solo define las propiedades de ejemplo con las que arranca la app.
  *
  * Las URLs de imagen son externas y verificadas; las de a0.muscache.com se pudren cuando
  * el anuncio original desaparece (ya pasó una vez), así que si alguna deja de cargar se
@@ -12,19 +11,24 @@
  * viajan en la base (ver Imagen).
  */
 
-export const MUNICIPIOS = [
-  { nombre: 'Riohacha', departamento: 'La Guajira', latitud: 11.5444, longitud: -72.9072 },
-  { nombre: 'Palomino', departamento: 'La Guajira', latitud: 11.2461, longitud: -73.5663 },
-  { nombre: 'Cabo de la Vela', departamento: 'La Guajira', latitud: 12.2019, longitud: -72.1585 },
-  { nombre: 'Manaure', departamento: 'La Guajira', latitud: 11.775, longitud: -72.4448 },
-  { nombre: 'Uribia', departamento: 'La Guajira', latitud: 11.7139, longitud: -72.266 },
-  { nombre: 'Dibulla', departamento: 'La Guajira', latitud: 11.2724, longitud: -73.3089 },
-  { nombre: 'Valledupar', departamento: 'Cesar', latitud: 10.4631, longitud: -73.2532 },
-  { nombre: 'Pueblo Bello', departamento: 'Cesar', latitud: 10.4167, longitud: -73.5867 },
-  { nombre: 'La Paz', departamento: 'Cesar', latitud: 10.3869, longitud: -73.1708 },
-  { nombre: 'San Diego', departamento: 'Cesar', latitud: 10.3344, longitud: -73.181 },
-  { nombre: 'Manaure Balcón del Cesar', departamento: 'Cesar', latitud: 10.3907, longitud: -73.0292 },
-  { nombre: 'Chimichagua', departamento: 'Cesar', latitud: 9.2577, longitud: -73.8143 },
+/**
+ * Destinos turísticos que NO son municipios: en DIVIPOLA no existen porque son
+ * corregimientos, pero son los nombres por los que la gente busca alojamiento.
+ * Se agregan a la lista de ubicaciones junto a los municipios oficiales.
+ */
+export const DESTINOS_TURISTICOS = [
+  {
+    nombre: 'Palomino',
+    departamento: 'La Guajira',
+    latitud: 11.2461,
+    longitud: -73.5663,
+  },
+  {
+    nombre: 'Cabo de la Vela',
+    departamento: 'La Guajira',
+    latitud: 12.2019,
+    longitud: -72.1585,
+  },
 ];
 
 export const CATEGORIAS = [
@@ -158,7 +162,9 @@ export interface PropiedadDemo {
   habitaciones: number;
   banos: number;
   categoria: string;
+  /** Nombre del municipio o destino; el seed lo resuelve dentro de su departamento. */
   municipio: string;
+  departamento: string;
 }
 
 export const PROPIEDADES: PropiedadDemo[] = [
@@ -172,6 +178,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 1,
     categoria: 'Apartamentos',
     municipio: 'Riohacha',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Casa fresca a cuadras de la playa',
@@ -182,6 +189,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'Riohacha',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Cabaña ecológica en la vía a Camarones',
@@ -192,6 +200,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 1,
     categoria: 'Cabañas',
     municipio: 'Riohacha',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Cabaña frente al mar en Palomino',
@@ -202,6 +211,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 1,
     categoria: 'Cabañas',
     municipio: 'Palomino',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Casa entre el río y el mar',
@@ -212,6 +222,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'Palomino',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Casa con jardín tropical y hamacas',
@@ -222,6 +233,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 3,
     categoria: 'Casas',
     municipio: 'Palomino',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Ranchería wayuu con vista al mar',
@@ -232,6 +244,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 1,
     categoria: 'Cabañas',
     municipio: 'Cabo de la Vela',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Cabaña frente al Pilón de Azúcar',
@@ -242,6 +255,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 1,
     categoria: 'Cabañas',
     municipio: 'Cabo de la Vela',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Casa de sal frente a las salinas',
@@ -252,6 +266,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'Manaure',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Cabaña wayuu cerca a las charcas rosadas',
@@ -262,6 +277,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 1,
     categoria: 'Cabañas',
     municipio: 'Manaure',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Casa del desierto, base para Punta Gallinas',
@@ -272,6 +288,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'Uribia',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Ranchería tradicional en la Alta Guajira',
@@ -282,6 +299,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 1,
     categoria: 'Cabañas',
     municipio: 'Uribia',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Casa de playa en Dibulla',
@@ -292,6 +310,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'Dibulla',
+    departamento: 'La Guajira',
   },
   {
     titulo: 'Finca entre el mar y la Sierra Nevada',
@@ -302,6 +321,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 3,
     categoria: 'Fincas',
     municipio: 'Dibulla',
+    departamento: 'La Guajira',
   },
   // Cesar --------------------------------------------------------------------
   {
@@ -313,6 +333,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 1,
     categoria: 'Apartamentos',
     municipio: 'Valledupar',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Casa vallenata cerca al río Guatapurí',
@@ -323,6 +344,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'Valledupar',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Apartamento con piscina en el norte',
@@ -333,6 +355,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Apartamentos',
     municipio: 'Valledupar',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Finca ganadera con jagüey natural',
@@ -343,6 +366,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 3,
     categoria: 'Fincas',
     municipio: 'Valledupar',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Casa del barrio Cañaguate',
@@ -353,6 +377,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'Valledupar',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Cabaña de montaña en Pueblo Bello',
@@ -363,6 +388,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 1,
     categoria: 'Cabañas',
     municipio: 'Pueblo Bello',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Finca cafetera con vista a la Sierra',
@@ -373,6 +399,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Fincas',
     municipio: 'Pueblo Bello',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Casa campestre a la entrada de la Sierra',
@@ -383,6 +410,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'Pueblo Bello',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Casa tradicional en La Paz',
@@ -393,6 +421,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'La Paz',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Finca con frutales en San Diego',
@@ -403,6 +432,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Fincas',
     municipio: 'San Diego',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Casa de descanso en San Diego',
@@ -413,6 +443,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'San Diego',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Cabaña con clima de montaña',
@@ -423,6 +454,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 1,
     categoria: 'Cabañas',
     municipio: 'Manaure Balcón del Cesar',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Casa mirador del Balcón del Cesar',
@@ -433,6 +465,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'Manaure Balcón del Cesar',
+    departamento: 'Cesar',
   },
   {
     titulo: 'Casa frente a la Ciénaga de Zapatosa',
@@ -443,6 +476,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
     banos: 2,
     categoria: 'Casas',
     municipio: 'Chimichagua',
+    departamento: 'Cesar',
   },
 ];
 

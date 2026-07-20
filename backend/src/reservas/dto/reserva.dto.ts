@@ -29,7 +29,11 @@ export function aReservaResponse(reserva: Reserva) {
       titulo: reserva.propiedad.titulo,
       direccion: reserva.propiedad.direccion,
       categoria: reserva.propiedad.categoria?.titulo ?? '',
-      municipio: reserva.propiedad.municipio,
+      municipio: {
+        id: reserva.propiedad.municipio.id,
+        nombre: reserva.propiedad.municipio.nombre,
+        departamento: reserva.propiedad.municipio.departamento?.nombre ?? '',
+      },
       imagenPortada:
         reserva.propiedad.imagenes?.[0]?.url ??
         reserva.propiedad.categoria?.imagenUrl ??

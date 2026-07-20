@@ -5,6 +5,7 @@ import {
   Caracteristica,
   Categoria,
   Conversacion,
+  Departamento,
   Mensaje,
   Municipio,
   Municipio as MunicipioModelo,
@@ -45,8 +46,28 @@ export class ApiService {
 
   // Catálogo ---------------------------------------------------------------
 
-  municipios(): Observable<Municipio[]> {
-    return this.http.get<MunicipioModelo[]>('/api/municipios');
+  departamentos(): Observable<Departamento[]> {
+    return this.http.get<Departamento[]>('/api/departamentos');
+  }
+
+  /**
+   * Ubicaciones (municipios de Colombia + destinos turísticos), con dos filtros según
+   * para qué se pidan:
+   *  - `departamentoId`: al publicar, la lista del departamento elegido.
+   *  - `conPropiedades`: en el buscador, solo donde hay alojamientos — ofrecer los 1.122
+   *    municipios del país sería inútil porque en casi todos no habría nada.
+   */
+  municipios(
+    filtros: { departamentoId?: number; conPropiedades?: boolean } = {},
+  ): Observable<Municipio[]> {
+    let params = new HttpParams();
+    if (filtros.departamentoId) {
+      params = params.set('departamentoId', filtros.departamentoId);
+    }
+    if (filtros.conPropiedades) {
+      params = params.set('conPropiedades', 'true');
+    }
+    return this.http.get<MunicipioModelo[]>('/api/municipios', { params });
   }
 
   categorias(): Observable<Categoria[]> {

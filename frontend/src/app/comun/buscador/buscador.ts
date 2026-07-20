@@ -53,14 +53,21 @@ export class BuscadorComponent {
   protected readonly hoy = hoyIso();
   protected readonly minSalida = computed(() => this.desde() ?? this.hoy);
 
+  /** Con la lista vacía no hay "todos" que ofrecer: se dice qué pasa. */
+  protected readonly opcionTodos = computed(() =>
+    this.municipios().length > 0 ? 'Todos los destinos' : 'Todavía no hay destinos publicados',
+  );
+
   constructor() {
     // Los inputs pueden llegar después (queryParams asíncronos): se sincronizan.
     effect(() => this.municipioId.set(this.municipioInicial()));
     effect(() => this.desde.set(this.desdeInicial()));
     effect(() => this.hasta.set(this.hastaInicial()));
 
+    // Solo destinos con alojamientos publicados: ofrecer los 1.122 municipios del país
+    // llevaría a búsquedas vacías en casi todos.
     this.api
-      .municipios()
+      .municipios({ conPropiedades: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (lista) => this.municipios.set(lista),

@@ -43,6 +43,25 @@ Guajira `#c1502e` (terracota, acentos), Noche `#16283f` (navbar/footer/texto), A
 (`$fontSerif`) para el nombre de la marca y los títulos. Logo: árbol de cañaguate
 (`comun/canaguate-mark`).
 
+## Ubicaciones
+
+- Las ubicaciones seleccionables son **los 1.122 municipios de Colombia** (DIVIPOLA del
+  DANE, en `backend/src/database/datos/divipola.json`, 112 KB) **más destinos turísticos
+  que no son municipios**: Palomino y Cabo de la Vela son corregimientos de Dibulla y
+  Uribia, pero son los nombres por los que se busca alojamiento en La Guajira. Un buscador
+  de hospedaje se organiza por destino, no por división política — de ahí el campo `tipo`
+  ('Municipio', 'Isla', 'Área no municipalizada', 'Destino').
+- **El dataset vive en el repositorio, no se consulta una API externa en tiempo real**: son
+  datos que cambian cada varios años, y depender de un servicio ajeno significaría que
+  nadie puede publicar si ese servicio está caído. (Se evaluó api-colombia.com: funciona
+  pero no trae coordenadas, que el mapa necesita.)
+- El seed de ubicaciones es **independiente** del de propiedades y ambos son idempotentes:
+  se puede agregar un destino nuevo sin tocar las propiedades ya publicadas.
+- La API **aplana** el municipio en las respuestas (`departamento` como texto, no objeto
+  anidado) para que las vistas no cambien. `GET /api/municipios` acepta `departamentoId`
+  (cascada al publicar) y `conPropiedades=true` (buscador: ofrecer los 1.122 municipios
+  cuando en casi todos no hay nada sería inútil).
+
 ## Reglas de negocio (portadas de la versión original)
 
 - **Reservas**: rango semiabierto `[entrada, salida)` — dos reservas se solapan si cada una

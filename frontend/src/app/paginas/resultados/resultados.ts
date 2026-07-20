@@ -91,12 +91,13 @@ export class ResultadosComponent {
     return this.propiedades().slice(inicio, inicio + POR_PAGINA);
   });
 
-  /** "Resultados en Valledupar" / "Resultados de Cabañas" / "Todos los alojamientos". */
+  /** "Resultados en Palomino, La Guajira" / "Resultados de Cabañas" / "Todos los alojamientos". */
   protected readonly titulo = computed(() => {
     const { municipioId, categoriaId } = this.filtros();
     const municipio = this.municipios().find((item) => item.id === municipioId);
     if (municipio) {
-      return `Resultados en ${municipio.nombre}`;
+      // Con 1.122 municipios hay nombres repetidos entre departamentos: se aclara cuál es.
+      return `Resultados en ${municipio.nombre}, ${municipio.departamento}`;
     }
     const categoria = this.categorias().find((item) => item.id === categoriaId);
     if (categoria) {
@@ -112,8 +113,9 @@ export class ResultadosComponent {
   });
 
   constructor() {
+    // Alcanza con los destinos que tienen alojamientos: es de donde puede venir el filtro.
     this.api
-      .municipios()
+      .municipios({ conPropiedades: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: (lista) => this.municipios.set(lista), error: () => undefined });
 

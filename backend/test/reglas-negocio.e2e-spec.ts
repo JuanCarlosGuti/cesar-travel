@@ -9,6 +9,7 @@ import { AuthModule } from '../src/auth/auth.module';
 import { CatalogoModule } from '../src/catalogo/catalogo.module';
 import { Caracteristica } from '../src/catalogo/entidades/caracteristica.entity';
 import { Categoria } from '../src/catalogo/entidades/categoria.entity';
+import { Departamento } from '../src/catalogo/entidades/departamento.entity';
 import { Municipio } from '../src/catalogo/entidades/municipio.entity';
 import { ChatModule } from '../src/chat/chat.module';
 import { entidades } from '../src/database/entidades';
@@ -88,13 +89,19 @@ describe('Reglas de negocio (e2e)', () => {
     tokenOtro = otro.body.token;
 
     // Catálogo mínimo, creado a mano: el seed de demostración no participa de las pruebas.
+    const departamentos = nest.get<Repository<Departamento>>(
+      getRepositoryToken(Departamento),
+    );
     const municipios = nest.get<Repository<Municipio>>(getRepositoryToken(Municipio));
     const categorias = nest.get<Repository<Categoria>>(getRepositoryToken(Categoria));
     const caracteristicas = nest.get<Repository<Caracteristica>>(
       getRepositoryToken(Caracteristica),
     );
+    const departamento = await departamentos.save(
+      departamentos.create({ codigoDane: '44', nombre: 'La Guajira' }),
+    );
     const municipio = await municipios.save(
-      municipios.create({ nombre: 'Palomino', departamento: 'La Guajira' }),
+      municipios.create({ nombre: 'Palomino', tipo: 'Destino', departamento }),
     );
     const categoria = await categorias.save(categorias.create({ titulo: 'Casas' }));
     const caracteristica = await caracteristicas.save(

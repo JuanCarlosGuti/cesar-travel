@@ -2,7 +2,7 @@
   <label class="campo campo-municipio">
     <span class="etiqueta">¿A dónde vas?</span>
     <select #selMunicipio (change)="elegirMunicipio(selMunicipio.value)">
-      <option value="">Todos los destinos</option>
+      <option value="">{{ opcionTodos() }}</option>
       @for (municipio of municipios(); track municipio.id) {
         <option [value]="municipio.id" [selected]="municipio.id === municipioId()">
           {{ municipio.nombre }}, {{ municipio.departamento }}

@@ -79,6 +79,10 @@ siguiente petición tarda ~50 segundos en despertarlo.
 ## Funcionalidades
 
 - **Catálogo** por municipio y categoría, con paginación de a 8 y promedio de reseñas.
+- **Ubicaciones de todo el país**: al publicar se elige departamento y luego municipio
+  (los 1.122 de Colombia según el DANE), más destinos turísticos que no son municipios
+  —Palomino, Cabo de la Vela— porque son los nombres por los que la gente busca. El
+  buscador, en cambio, solo ofrece los lugares donde ya hay alojamientos publicados.
 - **Búsqueda por fechas**: excluye las propiedades con reservas solapadas en el rango.
 - **Detalle**: galería con visor, servicios, políticas, mapa del municipio (OpenStreetMap),
   reseñas y — para el anfitrión — la lista de quién reservó y cuándo.

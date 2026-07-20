@@ -1,9 +1,19 @@
 // Tipos que devuelve la API (ver los dto de backend/src).
 
+export interface Departamento {
+  id: number;
+  codigoDane: string;
+  nombre: string;
+}
+
 export interface Municipio {
   id: number;
   nombre: string;
+  /** Nombre del departamento; la API lo aplana para las vistas. */
   departamento: string;
+  departamentoId?: number;
+  /** 'Municipio', 'Isla', 'Área no municipalizada' (DANE) o 'Destino' (corregimiento). */
+  tipo?: string;
   latitud: number | null;
   longitud: number | null;
 }

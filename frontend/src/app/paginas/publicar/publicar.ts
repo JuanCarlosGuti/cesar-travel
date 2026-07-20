@@ -14,12 +14,14 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { forkJoin, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { ApiService } from '../../nucleo/api';
 import {
   Caracteristica,
   Categoria,
+  Departamento,
   Imagen,
   Municipio,
   PropiedadDetalle,
@@ -54,6 +56,15 @@ function alMenosUna(control: AbstractControl): ValidationErrors | null {
   return Array.isArray(valor) && valor.length > 0 ? null : { alMenosUna: true };
 }
 
+/** Sin tildes ni mayúsculas: la propiedad trae el departamento como texto plano. */
+function normalizar(texto: string): string {
+  return texto
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .trim()
+    .toLowerCase();
+}
+
 @Component({
   selector: 'app-publicar',
   imports: [ReactiveFormsModule, RouterLink],
@@ -69,8 +80,13 @@ export class PublicarComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly categorias = signal<Categoria[]>([]);
-  protected readonly municipios = signal<Municipio[]>([]);
   protected readonly caracteristicas = signal<Caracteristica[]>([]);
+
+  /** Ubicación en cascada: el municipio solo se elige dentro de un departamento. */
+  protected readonly departamentos = signal<Departamento[]>([]);
+  protected readonly departamentoId = signal<number | null>(null);
+  protected readonly municipios = signal<Municipio[]>([]);
+  protected readonly cargandoMunicipios = signal(false);
 
   /** Id de la propiedad en edición; null mientras se está creando una nueva. */
   protected readonly propiedadId = signal<number | null>(null);
@@ -84,6 +100,14 @@ export class PublicarComponent {
   protected readonly eliminandoImagen = signal<number | null>(null);
 
   protected readonly edicion = computed(() => this.propiedadId() !== null);
+
+  /** Texto de la opción vacía del select de municipio, según en qué paso esté. */
+  protected readonly avisoMunicipio = computed(() => {
+    if (this.departamentoId() === null) {
+      return 'Elegí primero un departamento';
+    }
+    return this.cargandoMunicipios() ? 'Cargando municipios…' : 'Elegí un municipio';
+  });
 
   protected readonly formulario = this.fb.group({
     titulo: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(120)]),
@@ -114,7 +138,7 @@ export class PublicarComponent {
 
     forkJoin({
       categorias: this.api.categorias(),
-      municipios: this.api.municipios(),
+      departamentos: this.api.departamentos(),
       caracteristicas: this.api.caracteristicas(),
     })
       .pipe(
@@ -124,24 +148,96 @@ export class PublicarComponent {
             propiedad: id ? this.api.propiedad(id) : of(null),
           }),
         ),
-      )
-      .subscribe({
-        next: ({ catalogos, propiedad }) => {
+        // En edición hay que resolver el departamento y traer sus municipios ANTES de
+        // mostrar el formulario: si el <option> todavía no existe, el select queda vacío.
+        switchMap(({ catalogos, propiedad }) => {
           this.categorias.set(catalogos.categorias);
-          this.municipios.set(catalogos.municipios);
+          this.departamentos.set(catalogos.departamentos);
           this.caracteristicas.set(catalogos.caracteristicas);
 
-          if (propiedad) {
-            this.propiedadId.set(propiedad.id);
-            this.precargar(propiedad);
+          if (!propiedad) {
+            return of(null);
           }
-          this.cargando.set(false);
-        },
+
+          this.propiedadId.set(propiedad.id);
+          this.precargar(propiedad);
+
+          const departamentoId = this.departamentoDe(propiedad, catalogos.departamentos);
+          if (departamentoId === null) {
+            return of(propiedad);
+          }
+
+          this.departamentoId.set(departamentoId);
+          return this.pedirMunicipios(departamentoId).pipe(
+            tap(() =>
+              this.formulario.controls.municipioId.setValue(propiedad.municipio?.id ?? null),
+            ),
+            map(() => propiedad),
+          );
+        }),
+      )
+      .subscribe({
+        next: () => this.cargando.set(false),
         error: (respuesta: HttpErrorResponse) => {
           this.error.set(mensajeDeError(respuesta));
           this.cargando.set(false);
         },
       });
+  }
+
+  /**
+   * La propiedad trae el departamento solo como nombre (`municipio.departamento`), así que
+   * se resuelve contra el catálogo; si algún día viniera el id, se usa directamente.
+   */
+  private departamentoDe(
+    propiedad: PropiedadDetalle,
+    departamentos: Departamento[],
+  ): number | null {
+    const municipio = propiedad.municipio;
+    if (!municipio) {
+      return null;
+    }
+    if (municipio.departamentoId) {
+      return municipio.departamentoId;
+    }
+    const buscado = normalizar(municipio.departamento ?? '');
+    return departamentos.find((item) => normalizar(item.nombre) === buscado)?.id ?? null;
+  }
+
+  /** Trae las ubicaciones de un departamento; un fallo deja la lista vacía, no rompe la página. */
+  private pedirMunicipios(departamentoId: number) {
+    this.cargandoMunicipios.set(true);
+    return this.api.municipios({ departamentoId }).pipe(
+      tap((lista) => {
+        this.municipios.set(lista);
+        this.cargandoMunicipios.set(false);
+      }),
+      catchError(() => {
+        this.municipios.set([]);
+        this.cargandoMunicipios.set(false);
+        return of<Municipio[]>([]);
+      }),
+    );
+  }
+
+  /** Cambiar de departamento invalida el municipio elegido: hay que volver a elegirlo. */
+  protected elegirDepartamento(valor: string): void {
+    const id = valor ? Number(valor) : null;
+    this.departamentoId.set(id);
+    this.municipios.set([]);
+    this.formulario.controls.municipioId.setValue(null);
+
+    if (id === null) {
+      return;
+    }
+    this.pedirMunicipios(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  /** Los corregimientos turísticos se marcan para que no se lean como municipios oficiales. */
+  protected etiquetaMunicipio(municipio: Municipio): string {
+    return municipio.tipo === 'Destino'
+      ? `${municipio.nombre} (destino turístico)`
+      : municipio.nombre;
   }
 
   private precargar(propiedad: PropiedadDetalle): void {
@@ -151,7 +247,7 @@ export class PublicarComponent {
       habitaciones: propiedad.habitaciones,
       banos: propiedad.banos,
       direccion: propiedad.direccion,
-      municipioId: propiedad.municipio?.id ?? null,
+      // `municipioId` no va acá: se asigna recién cuando llega la lista del departamento.
       descripcion: propiedad.descripcion,
       caracteristicaIds: (propiedad.caracteristicas ?? []).map((item) => item.id),
       normas: propiedad.normas ?? '',

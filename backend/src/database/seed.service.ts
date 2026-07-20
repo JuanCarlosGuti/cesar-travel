@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { Usuario } from '../auth/entidades/usuario.entity';
 import { Caracteristica } from '../catalogo/entidades/caracteristica.entity';
 import { Categoria } from '../catalogo/entidades/categoria.entity';
+import { Departamento } from '../catalogo/entidades/departamento.entity';
 import { Municipio } from '../catalogo/entidades/municipio.entity';
 import { Imagen } from '../propiedades/entidades/imagen.entity';
 import { Propiedad } from '../propiedades/entidades/propiedad.entity';
@@ -13,19 +14,40 @@ import {
   ANFITRION_DEMO,
   CARACTERISTICAS,
   CATEGORIAS,
-  MUNICIPIOS,
+  DESTINOS_TURISTICOS,
   NORMAS_POR_DEFECTO,
   PROPIEDADES,
   galeriaDe,
   serviciosDe,
 } from './datos-demo';
+import divipola from './datos/divipola.json';
+
+interface MunicipioDivipola {
+  codigo: string;
+  nombre: string;
+  tipo: string;
+  latitud: number | null;
+  longitud: number | null;
+}
+
+interface DepartamentoDivipola {
+  codigo: string;
+  nombre: string;
+  municipios: MunicipioDivipola[];
+}
 
 /**
- * Siembra el catálogo de demostración al arrancar, solo si la base está vacía.
+ * Prepara la base al arrancar. Son dos pasos independientes y ambos idempotentes:
  *
- * Es idempotente a propósito: en producción (Postgres) los datos persisten entre
- * despliegues y el seed no vuelve a correr; en desarrollo basta con borrar el archivo
- * SQLite para regenerar todo desde cero.
+ *  1. Ubicaciones: los 33 departamentos y 1.122 municipios de Colombia (DIVIPOLA del
+ *     DANE) más los destinos turísticos que no son municipios. Se cargan desde un
+ *     archivo del repositorio y no desde una API externa: son datos que cambian cada
+ *     varios años, y depender de un servicio ajeno significaría que nadie puede publicar
+ *     una propiedad si ese servicio está caído.
+ *  2. Catálogo de demostración: categorías, servicios, anfitrión y 28 propiedades.
+ *
+ * Que sean independientes importa: si mañana se agrega un destino nuevo, se puede
+ * recargar solo el paso 1 sin tocar las propiedades ya publicadas por usuarios reales.
  */
 @Injectable()
 export class SeedService implements OnApplicationBootstrap {
@@ -33,6 +55,8 @@ export class SeedService implements OnApplicationBootstrap {
 
   constructor(
     @InjectRepository(Usuario) private readonly usuarios: Repository<Usuario>,
+    @InjectRepository(Departamento)
+    private readonly departamentos: Repository<Departamento>,
     @InjectRepository(Municipio) private readonly municipios: Repository<Municipio>,
     @InjectRepository(Categoria) private readonly categorias: Repository<Categoria>,
     @InjectRepository(Caracteristica)
@@ -41,20 +65,69 @@ export class SeedService implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
-    await this.sembrar();
+    await this.sembrarUbicaciones();
+    await this.sembrarCatalogo();
   }
 
-  async sembrar(): Promise<void> {
-    if ((await this.municipios.count()) > 0) {
-      this.logger.log('La base ya tiene datos: se omite el seed.');
+  /** Departamentos y municipios de Colombia + destinos turísticos. */
+  async sembrarUbicaciones(): Promise<void> {
+    if ((await this.departamentos.count()) > 0) {
+      return;
+    }
+    this.logger.log('Cargando la división territorial de Colombia...');
+
+    const fuente = divipola as DepartamentoDivipola[];
+    const departamentos = await this.departamentos.save(
+      fuente.map((d) =>
+        this.departamentos.create({ codigoDane: d.codigo, nombre: d.nombre }),
+      ),
+    );
+    const porNombre = new Map(departamentos.map((d) => [d.nombre, d]));
+
+    const municipios = fuente.flatMap((d) =>
+      d.municipios.map((m) =>
+        this.municipios.create({
+          codigoDane: m.codigo,
+          nombre: m.nombre,
+          tipo: m.tipo,
+          latitud: m.latitud,
+          longitud: m.longitud,
+          departamento: porNombre.get(d.nombre),
+        }),
+      ),
+    );
+
+    // Destinos turísticos (corregimientos): no están en DIVIPOLA pero son los nombres
+    // por los que la gente busca alojamiento.
+    municipios.push(
+      ...DESTINOS_TURISTICOS.map((destino) =>
+        this.municipios.create({
+          codigoDane: null,
+          nombre: destino.nombre,
+          tipo: 'Destino',
+          latitud: destino.latitud,
+          longitud: destino.longitud,
+          departamento: porNombre.get(destino.departamento),
+        }),
+      ),
+    );
+
+    await this.municipios.save(municipios, { chunk: 200 });
+    this.logger.log(
+      `Ubicaciones listas: ${departamentos.length} departamentos, ` +
+        `${municipios.length} municipios y destinos.`,
+    );
+  }
+
+  /** Catálogo de demostración: solo si todavía no hay propiedades publicadas. */
+  async sembrarCatalogo(): Promise<void> {
+    if ((await this.propiedades.count()) > 0) {
+      this.logger.log('Ya hay propiedades publicadas: se omite el catálogo de demostración.');
       return;
     }
 
-    this.logger.log('Base vacía: sembrando el catálogo de demostración...');
+    this.logger.log('Sembrando el catálogo de demostración...');
 
-    const municipios = await this.municipios.save(
-      MUNICIPIOS.map((m) => this.municipios.create(m)),
-    );
     const categorias = await this.categorias.save(
       CATEGORIAS.map((c) => this.categorias.create(c)),
     );
@@ -62,27 +135,45 @@ export class SeedService implements OnApplicationBootstrap {
       CARACTERISTICAS.map((c) => this.caracteristicas.create(c)),
     );
 
-    const passwordAnfitrion = this.passwordDelAnfitrion();
     const anfitrion = await this.usuarios.save(
       this.usuarios.create({
         ...ANFITRION_DEMO,
-        password: await bcrypt.hash(passwordAnfitrion, 10),
+        password: await bcrypt.hash(this.passwordDelAnfitrion(), 10),
       }),
     );
 
-    const porNombre = <T extends { nombre?: string; titulo?: string }>(
-      lista: T[],
-      valor: string,
-      campo: 'nombre' | 'titulo',
-    ): T => {
-      const encontrado = lista.find((item) => item[campo] === valor);
-      if (!encontrado) {
-        throw new Error(`Dato de demo inconsistente: no existe ${campo}="${valor}"`);
+    const buscarCategoria = (titulo: string): Categoria => {
+      const encontrada = categorias.find((c) => c.titulo === titulo);
+      if (!encontrada) {
+        throw new Error(`Dato de demo inconsistente: no existe la categoría "${titulo}"`);
       }
-      return encontrado;
+      return encontrada;
     };
 
-    const propiedades = PROPIEDADES.map((datos, indice) => {
+    const buscarCaracteristica = (nombre: string): Caracteristica => {
+      const encontrada = caracteristicas.find((c) => c.nombre === nombre);
+      if (!encontrada) {
+        throw new Error(`Dato de demo inconsistente: no existe el servicio "${nombre}"`);
+      }
+      return encontrada;
+    };
+
+    const propiedades: Propiedad[] = [];
+    for (const [indice, datos] of PROPIEDADES.entries()) {
+      // El nombre solo es único dentro de su departamento (hay varios "San Diego" o
+      // "Manaure" en el país), por eso la búsqueda usa los dos campos.
+      const municipio = await this.municipios.findOne({
+        where: {
+          nombre: datos.municipio,
+          departamento: { nombre: datos.departamento },
+        },
+      });
+      if (!municipio) {
+        throw new Error(
+          `Dato de demo inconsistente: no existe "${datos.municipio}, ${datos.departamento}"`,
+        );
+      }
+
       const propiedad = this.propiedades.create({
         titulo: datos.titulo,
         descripcion: datos.descripcion,
@@ -91,23 +182,21 @@ export class SeedService implements OnApplicationBootstrap {
         banos: datos.banos,
         ...NORMAS_POR_DEFECTO,
         duenio: anfitrion,
-        categoria: porNombre(categorias, datos.categoria, 'titulo'),
-        municipio: porNombre(municipios, datos.municipio, 'nombre'),
-        caracteristicas: serviciosDe(datos.categoria).map((servicio) =>
-          porNombre(caracteristicas, servicio, 'nombre'),
-        ),
+        categoria: buscarCategoria(datos.categoria),
+        municipio,
+        caracteristicas: serviciosDe(datos.categoria).map(buscarCaracteristica),
       });
       propiedad.imagenes = galeriaDe(indice).map((url) =>
         Object.assign(new Imagen(), { titulo: datos.titulo, urlExterna: url }),
       );
-      return propiedad;
-    });
+      propiedades.push(propiedad);
+    }
 
     await this.propiedades.save(propiedades);
 
     this.logger.log(
-      `Seed listo: ${municipios.length} municipios, ${categorias.length} categorías, ` +
-        `${propiedades.length} propiedades (anfitrión: ${anfitrion.email}).`,
+      `Catálogo listo: ${categorias.length} categorías y ${propiedades.length} ` +
+        `propiedades (anfitrión: ${anfitrion.email}).`,
     );
   }
 

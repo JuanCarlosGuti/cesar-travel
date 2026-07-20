@@ -101,6 +101,13 @@
   textarea {
     resize: vertical;
   }
+
+  // El municipio arranca bloqueado hasta que se elige un departamento.
+  select:disabled {
+    background: rgba($Dark, 0.05);
+    color: rgba($Dark, 0.45);
+    cursor: not-allowed;
+  }
 }
 
 .campo-ancho {
