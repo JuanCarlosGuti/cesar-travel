@@ -1,0 +1,74 @@
+<section class="hero">
+  <div class="hero-contenido">
+    <p class="antetitulo">Cesar &amp; La Guajira</p>
+    <h1>Alojamientos con el sol del Cesar y el mar de La Guajira</h1>
+    <p class="bajada">
+      Fincas, cabañas y casas de anfitriones locales, desde Valledupar hasta el Cabo de la
+      Vela.
+    </p>
+
+    <app-buscador />
+  </div>
+</section>
+
+<section class="seccion categorias-seccion">
+  <div class="contenedor">
+    <header class="seccion-encabezado">
+      <h2>Buscar por tipo de alojamiento</h2>
+      <p>Elegí el estilo de viaje y te mostramos lo disponible.</p>
+    </header>
+
+    <div class="grilla-categorias">
+      @for (categoria of categorias(); track categoria.id) {
+        <a
+          class="categoria"
+          [routerLink]="['/buscar']"
+          [queryParams]="{ categoriaId: categoria.id }"
+        >
+          @if (categoria.imagenUrl; as url) {
+            <img [src]="url" [alt]="categoria.titulo" loading="lazy" />
+          } @else {
+            <div class="categoria-vacia" aria-hidden="true"></div>
+          }
+          <span class="categoria-titulo">{{ categoria.titulo }}</span>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="seccion" id="recomendaciones">
+  <div class="contenedor">
+    <header class="seccion-encabezado">
+      <h2>Recomendaciones</h2>
+      <p>Una selección rotativa de lo que ofrecen nuestros anfitriones.</p>
+    </header>
+
+    @if (cargando()) {
+      <p class="aviso">Cargando alojamientos…</p>
+    } @else if (error()) {
+      <p class="aviso">
+        No pudimos cargar los alojamientos en este momento. Probá de nuevo en un rato.
+      </p>
+    } @else if (!total()) {
+      <p class="aviso">Todavía no hay alojamientos publicados.</p>
+    } @else {
+      <div class="grilla-propiedades">
+        @for (propiedad of visibles(); track propiedad.id) {
+          <app-tarjeta-propiedad
+            [propiedad]="propiedad"
+            [promedio]="promedioDe(propiedad.id)"
+            [cantidadResenas]="cantidadDe(propiedad.id)"
+          />
+        }
+      </div>
+
+      <app-paginador
+        [total]="total()"
+        [porPagina]="porPagina"
+        [pagina]="pagina()"
+        (cambio)="cambiarPagina($event)"
+      />
+    }
+  </div>
+</section>

@@ -1,0 +1,72 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+.pie {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 90;
+  height: $footer-h;
+  background-color: $Dark;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.pie__interior {
+  max-width: $mx-w;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 $navbar-padding-h;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pie__texto {
+  margin: 0;
+  color: $colorFondo;
+  font-size: 0.85rem;
+  letter-spacing: 0.3px;
+}
+
+.redes {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.redes__item {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: $colorFondo;
+  background-color: rgba($colorFondo, 0.08);
+  transition: color 200ms ease, background-color 200ms ease;
+
+  svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  &:hover {
+    color: $Dark;
+    background-color: $colorPpal;
+  }
+}
+
+@include breakpoint-down('small') {
+  .pie__texto {
+    font-size: 0.75rem;
+  }
+
+  .redes {
+    gap: 8px;
+  }
+}

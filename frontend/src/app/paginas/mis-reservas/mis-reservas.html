@@ -1,0 +1,133 @@
+<section class="mis-reservas">
+  <header class="encabezado">
+    <h1>Mis reservas</h1>
+    <p>Tus estadías en el Cesar y La Guajira.</p>
+  </header>
+
+  @if (error(); as mensaje) {
+    <p class="alerta" role="alert">{{ mensaje }}</p>
+  }
+
+  @if (cargando()) {
+    <div class="esqueletos" aria-hidden="true">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="esqueleto"></div>
+      }
+    </div>
+  } @else if (vacio()) {
+    <div class="vacio">
+      <h2>Todavía no tenés reservas</h2>
+      <p>Cuando reserves un alojamiento vas a verlo acá, con sus fechas y su check in.</p>
+      <a class="boton-ppal" routerLink="/">Buscar alojamientos</a>
+    </div>
+  } @else {
+    <ul class="lista">
+      @for (reserva of reservas(); track reserva.id) {
+        <li class="tarjeta">
+          <div class="portada">
+            @if (reserva.propiedad.imagenPortada; as imagen) {
+              <img [src]="imagen" [alt]="reserva.propiedad.titulo" loading="lazy" />
+            } @else {
+              <div class="sin-imagen" aria-hidden="true">Cesar Travel</div>
+            }
+          </div>
+
+          <div class="cuerpo">
+            <p class="categoria">{{ reserva.propiedad.categoria }}</p>
+            <h2 class="titulo">{{ reserva.propiedad.titulo }}</h2>
+            <p class="ubicacion">
+              {{ reserva.propiedad.direccion }} ·
+              {{ reserva.propiedad.municipio.nombre }},
+              {{ reserva.propiedad.municipio.departamento }}
+            </p>
+
+            <dl class="fechas">
+              <div>
+                <dt>Check in</dt>
+                <dd>{{ fecha(reserva.entrada) }}</dd>
+                @if (reserva.horaLlegada) {
+                  <dd class="hora">Llegada a las {{ reserva.horaLlegada }}</dd>
+                }
+              </div>
+              <div>
+                <dt>Check out</dt>
+                <dd>{{ fecha(reserva.salida) }}</dd>
+              </div>
+            </dl>
+
+            @if (gracias() === reserva.propiedad.id) {
+              <p class="gracias" role="status">
+                ¡Gracias por tu reseña! Ya está publicada en la propiedad.
+              </p>
+            }
+
+            <div class="acciones">
+              <button
+                type="button"
+                class="boton-borde"
+                [disabled]="cancelando() === reserva.id"
+                (click)="cancelar(reserva)"
+              >
+                {{ cancelando() === reserva.id ? 'Cancelando…' : 'Cancelar reserva' }}
+              </button>
+
+              @if (puedeResenar(reserva)) {
+                @if (resenando() === reserva.id) {
+                  <button type="button" class="boton-texto" (click)="cerrarResena()">
+                    Cancelar reseña
+                  </button>
+                } @else {
+                  <button type="button" class="boton-ppal" (click)="abrirResena(reserva)">
+                    Dejar reseña
+                  </button>
+                }
+              }
+            </div>
+
+            @if (resenando() === reserva.id) {
+              <form
+                class="formulario-resena"
+                [formGroup]="formularioResena"
+                (ngSubmit)="enviarResena(reserva)"
+              >
+                <h3>¿Cómo estuvo tu estadía?</h3>
+
+                <app-estrellas
+                  [valor]="formularioResena.controls.puntaje.value"
+                  [seleccionable]="true"
+                  (seleccion)="elegirPuntaje($event)"
+                />
+
+                @if (
+                  formularioResena.controls.puntaje.touched &&
+                  formularioResena.controls.puntaje.invalid
+                ) {
+                  <p class="error-campo">Elegí un puntaje de 1 a 5 estrellas.</p>
+                }
+
+                <label class="campo">
+                  <span>Comentario (opcional)</span>
+                  <textarea
+                    formControlName="comentario"
+                    rows="4"
+                    maxlength="1000"
+                    placeholder="Contá qué te gustó del lugar, la atención, la ubicación…"
+                  ></textarea>
+                  <small class="contador">{{ restantes() }} caracteres restantes</small>
+                </label>
+
+                @if (errorResena(); as mensaje) {
+                  <p class="alerta" role="alert">{{ mensaje }}</p>
+                }
+
+                <button type="submit" class="boton-ppal" [disabled]="enviandoResena()">
+                  {{ enviandoResena() ? 'Enviando…' : 'Publicar reseña' }}
+                </button>
+              </form>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>

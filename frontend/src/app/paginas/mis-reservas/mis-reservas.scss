@@ -1,0 +1,298 @@
+@use 'tokens' as *;
+
+.mis-reservas {
+  max-width: $mx-w;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.encabezado {
+  margin-bottom: 28px;
+
+  h1 {
+    font-family: $fontSerif;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    color: $Dark;
+    margin: 0 0 6px;
+  }
+
+  p {
+    margin: 0;
+    color: rgba($Dark, 0.7);
+  }
+}
+
+.alerta {
+  background: rgba($colorAccent, 0.1);
+  border-left: 4px solid $colorAccent;
+  color: $colorAccent;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin: 0 0 18px;
+  font-size: 0.92rem;
+}
+
+// Estado de carga ------------------------------------------------------------
+
+.esqueletos {
+  display: grid;
+  gap: 18px;
+}
+
+.esqueleto {
+  height: 190px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, $lightGray 25%, $light 50%, $lightGray 75%);
+  background-size: 200% 100%;
+  animation: brillo 1.4s ease-in-out infinite;
+}
+
+@keyframes brillo {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+// Estado vacío ---------------------------------------------------------------
+
+.vacio {
+  text-align: center;
+  background: $light;
+  border: 1px dashed rgba($Dark, 0.2);
+  border-radius: 16px;
+  padding: 56px 24px;
+
+  h2 {
+    font-family: $fontSerif;
+    color: $Dark;
+    margin: 0 0 8px;
+  }
+
+  p {
+    color: rgba($Dark, 0.7);
+    margin: 0 0 22px;
+  }
+}
+
+// Tarjetas -------------------------------------------------------------------
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 20px;
+}
+
+.tarjeta {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  background: $light;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba($Dark, 0.08);
+
+  @include breakpoint-down('medium') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.portada {
+  position: relative;
+  min-height: 190px;
+  background: $lightGray;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.sin-imagen {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-family: $fontSerif;
+  color: rgba($Dark, 0.45);
+}
+
+.cuerpo {
+  padding: 20px 22px;
+}
+
+.categoria {
+  margin: 0 0 4px;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $colorClaro;
+  font-weight: 700;
+}
+
+.titulo {
+  font-family: $fontSerif;
+  font-size: 1.3rem;
+  color: $Dark;
+  margin: 0 0 4px;
+}
+
+.ubicacion {
+  margin: 0 0 16px;
+  color: rgba($Dark, 0.65);
+  font-size: 0.9rem;
+}
+
+.fechas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  background: $colorFondo;
+  border-radius: 10px;
+
+  dt {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba($Dark, 0.55);
+    margin-bottom: 2px;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 600;
+    color: $Dark;
+  }
+
+  .hora {
+    font-weight: 400;
+    font-size: 0.82rem;
+    color: rgba($Dark, 0.6);
+  }
+}
+
+.gracias {
+  background: rgba($colorSupport, 0.12);
+  color: $colorSupport;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  margin: 0 0 14px;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+// Botones --------------------------------------------------------------------
+
+.boton-ppal {
+  @include links();
+  cursor: pointer;
+  display: inline-block;
+  transition: filter 0.15s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.94);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.boton-borde {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid rgba($colorAccent, 0.6);
+  background: transparent;
+  color: $colorAccent;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba($colorAccent, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.boton-texto {
+  background: none;
+  border: none;
+  color: rgba($Dark, 0.65);
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+// Formulario de reseña -------------------------------------------------------
+
+.formulario-resena {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 12px;
+  background: $colorFondo;
+  border: 1px solid rgba($colorPpal, 0.35);
+
+  h3 {
+    font-family: $fontSerif;
+    color: $Dark;
+    margin: 0 0 10px;
+    font-size: 1.05rem;
+  }
+}
+
+.campo {
+  display: block;
+  margin: 14px 0;
+
+  > span {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $Dark;
+    margin-bottom: 6px;
+  }
+
+  textarea {
+    width: 100%;
+    border: 1px solid rgba($Dark, 0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font: inherit;
+    resize: vertical;
+    background: $light;
+
+    &:focus {
+      outline: 2px solid rgba($colorClaro, 0.5);
+      border-color: $colorClaro;
+    }
+  }
+}
+
+.contador {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: rgba($Dark, 0.55);
+}
+
+.error-campo {
+  color: $colorAccent;
+  font-size: 0.85rem;
+  margin: 8px 0 0;
+}

@@ -1,0 +1,62 @@
+<section class="barra-busqueda">
+  <div class="contenedor">
+    <app-buscador
+      [compacto]="true"
+      [municipioInicial]="filtros().municipioId"
+      [desdeInicial]="filtros().desde"
+      [hastaInicial]="filtros().hasta"
+      [categoriaId]="filtros().categoriaId"
+    />
+  </div>
+</section>
+
+<section class="listado" id="listado">
+  <div class="contenedor">
+    <header class="encabezado">
+      <h1>
+        {{ titulo() }}
+        @if (rango()) {
+          <span class="rango">— {{ rango() }}</span>
+        }
+      </h1>
+      @if (!cargando() && !error()) {
+        <p class="conteo">
+          {{ total() }} {{ total() === 1 ? 'alojamiento' : 'alojamientos' }}
+        </p>
+      }
+    </header>
+
+    @if (cargando()) {
+      <p class="aviso">Buscando alojamientos…</p>
+    } @else if (error()) {
+      <p class="aviso">
+        No pudimos completar la búsqueda en este momento. Probá de nuevo en un rato.
+      </p>
+    } @else if (!total()) {
+      <div class="vacio">
+        <h2>No hay propiedades disponibles con esos criterios</h2>
+        <p>
+          Probá con otro destino, ampliá el rango de fechas o mirá todos los alojamientos
+          del catálogo.
+        </p>
+      </div>
+    } @else {
+      <div class="grilla">
+        @for (propiedad of visibles(); track propiedad.id) {
+          <app-tarjeta-propiedad
+            [propiedad]="propiedad"
+            [promedio]="promedioDe(propiedad.id)"
+            [cantidadResenas]="cantidadDe(propiedad.id)"
+          />
+        }
+      </div>
+
+      <app-paginador
+        [total]="total()"
+        [porPagina]="porPagina"
+        [pagina]="pagina()"
+        (cambio)="cambiarPagina($event)"
+      />
+    }
+  </div>
+</section>

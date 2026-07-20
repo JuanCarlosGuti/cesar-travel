@@ -1,0 +1,150 @@
+@use 'sass:color';
+@use 'tokens' as *;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.tarjeta {
+  background-color: $light;
+  border: 1px solid rgba($Dark, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba($Dark, 0.07);
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  transition:
+    transform 200ms ease-in-out,
+    box-shadow 200ms ease-in-out,
+    border-color 200ms ease-in-out;
+
+  &:hover {
+    border-color: rgba($colorPpal, 0.55);
+    box-shadow: 0 10px 24px rgba($Dark, 0.16);
+    transform: translateY(-4px);
+
+    .foto img {
+      transform: scale(1.06);
+    }
+  }
+}
+
+.foto {
+  background-color: rgba($colorClaro, 0.12);
+  flex: 0 0 42%;
+  overflow: hidden;
+  position: relative;
+
+  img {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms ease-in-out;
+    width: 100%;
+  }
+}
+
+.foto-vacia {
+  align-items: center;
+  background: linear-gradient(135deg, rgba($colorClaro, 0.9), rgba($Dark, 0.9));
+  color: rgba($light, 0.8);
+  display: flex;
+  font-family: $fontSerif;
+  font-size: 1rem;
+  height: 100%;
+  justify-content: center;
+  letter-spacing: 1px;
+  min-height: 170px;
+}
+
+.cuerpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+}
+
+.encabezado {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  justify-content: space-between;
+}
+
+.categoria {
+  color: $colorClaro;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.titulo {
+  color: $Dark;
+  font-family: $fontSerif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.ubicacion {
+  align-items: flex-start;
+  color: rgba($Dark, 0.7);
+  display: flex;
+  font-size: 0.88rem;
+  gap: 6px;
+  margin: 0;
+
+  svg {
+    fill: $colorAccent;
+    flex: 0 0 auto;
+    height: 16px;
+    margin-top: 2px;
+    width: 16px;
+  }
+}
+
+.datos {
+  color: rgba($Dark, 0.55);
+  font-size: 0.82rem;
+  margin: 0;
+}
+
+.ver {
+  @include links();
+  align-self: flex-start;
+  display: inline-block;
+  margin-top: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  transition:
+    background-color 160ms ease-in-out,
+    transform 160ms ease-in-out;
+
+  &:hover {
+    background-color: color.adjust($colorPpal, $lightness: -6%);
+    transform: translateY(-1px);
+  }
+}
+
+// En móvil la tarjeta se apila: foto arriba, contenido debajo.
+@include breakpoint-down('medium') {
+  .tarjeta {
+    flex-direction: column;
+  }
+
+  .foto {
+    flex: 0 0 auto;
+    height: 190px;
+  }
+
+  .ver {
+    align-self: stretch;
+    margin-top: 12px;
+    text-align: center;
+  }
+}

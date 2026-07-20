@@ -1,0 +1,59 @@
+<section class="mensajes">
+  <header class="encabezado">
+    <h1>Mensajes</h1>
+    <p>Tus conversaciones con anfitriones y huéspedes.</p>
+  </header>
+
+  @if (error(); as mensaje) {
+    <p class="alerta" role="alert">{{ mensaje }}</p>
+  }
+
+  @if (cargando()) {
+    <div class="esqueletos" aria-hidden="true">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="esqueleto"></div>
+      }
+    </div>
+  } @else if (vacio()) {
+    <div class="vacio">
+      <h2>No tenés conversaciones todavía</h2>
+      <p>
+        Para empezar a chatear, entrá al detalle de una propiedad y escribile a su anfitrión.
+        La conversación va a aparecer acá.
+      </p>
+      <a class="boton-ppal" routerLink="/">Explorar alojamientos</a>
+    </div>
+  } @else {
+    <ul class="bandeja">
+      @for (conversacion of conversaciones(); track conversacion.id) {
+        <li>
+          <a class="fila" [routerLink]="['/mensajes', conversacion.id]">
+            <span class="avatar" aria-hidden="true">
+              {{ inicial(conversacion.otroUsuario) }}
+            </span>
+
+            <span class="texto">
+              <span class="linea-superior">
+                <strong class="nombre">{{ conversacion.otroUsuario }}</strong>
+                @if (conversacion.sinLeer && conversacion.sinLeer > 0) {
+                  <span
+                    class="badge"
+                    [attr.aria-label]="conversacion.sinLeer + ' mensajes sin leer'"
+                  >
+                    {{ conversacion.sinLeer }}
+                  </span>
+                }
+              </span>
+
+              <span class="propiedad">{{ conversacion.propiedadTitulo }}</span>
+
+              <span class="previa">
+                {{ conversacion.ultimoMensaje || 'Sin mensajes todavía' }}
+              </span>
+            </span>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</section>

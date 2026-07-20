@@ -1,0 +1,340 @@
+@if (cargando()) {
+  <div class="estado">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Cargando la propiedad…</p>
+  </div>
+} @else if (error()) {
+  <div class="estado estado--error">
+    <p>{{ error() }}</p>
+    <a routerLink="/" class="boton boton--dorado">Volver al inicio</a>
+  </div>
+} @else if (propiedad(); as p) {
+  <!-- Encabezado dorado ------------------------------------------------- -->
+  <header class="encabezado">
+    <div class="contenedor encabezado__interior">
+      <div class="encabezado__texto">
+        <span class="encabezado__categoria">{{ p.categoria.titulo }}</span>
+        <h1 class="encabezado__titulo">{{ p.titulo }}</h1>
+      </div>
+
+      <div class="encabezado__acciones">
+        <button type="button" class="icono" (click)="volver()" aria-label="Volver">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path
+              d="M15 19l-7-7 7-7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>Volver</span>
+        </button>
+
+        <button type="button" class="icono" (click)="compartir()" aria-label="Compartir">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path
+              d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M12 15V3m0 0L8 7m4-4l4 4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>{{ copiado() ? '¡Copiado!' : 'Compartir' }}</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="contenedor pagina">
+    <!-- Ubicación ------------------------------------------------------- -->
+    <section class="ubicacion">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" class="pin">
+        <path
+          d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+        <circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="2" />
+      </svg>
+      <p>
+        <strong>{{ p.municipio.nombre }}, {{ p.municipio.departamento }}</strong>
+        <span class="ubicacion__direccion">{{ p.direccion }}</span>
+      </p>
+      <ul class="ubicacion__datos">
+        <li>{{ p.habitaciones }} {{ p.habitaciones === 1 ? 'habitación' : 'habitaciones' }}</li>
+        <li>{{ p.banos }} {{ p.banos === 1 ? 'baño' : 'baños' }}</li>
+      </ul>
+    </section>
+
+    <!-- Galería --------------------------------------------------------- -->
+    @if (imagenes().length) {
+      <section class="galeria" aria-label="Galería de imágenes">
+        @if (imagenPrincipal(); as principal) {
+          <button type="button" class="galeria__principal" (click)="abrirVisor(0)">
+            <img [src]="principal.url" [alt]="principal.titulo || p.titulo" loading="lazy" />
+          </button>
+        }
+
+        @if (imagenesSecundarias().length) {
+          <div class="galeria__grilla">
+            @for (img of imagenesSecundarias(); track img.id; let i = $index) {
+              <button type="button" class="galeria__celda" (click)="abrirVisor(i + 1)">
+                <img [src]="img.url" [alt]="img.titulo || p.titulo" loading="lazy" />
+                @if (i === 3 && imagenes().length > 5) {
+                  <span class="galeria__mas">+{{ imagenes().length - 5 }}</span>
+                }
+              </button>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    <!-- Descripción ----------------------------------------------------- -->
+    <section class="bloque">
+      <h2>Sobre este alojamiento</h2>
+      <p class="descripcion">{{ p.descripcion }}</p>
+
+      <!-- Contacto con el dueño -->
+      @if (!esDuenio()) {
+        @if (autenticado()) {
+          <button
+            type="button"
+            class="boton boton--teal"
+            (click)="escribirAlDuenio()"
+            [disabled]="abriendoChat()"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                d="M21 11.5a8.4 8.4 0 01-9 8.4 9 9 0 01-3.9-.9L3 21l1.9-4.6A8.4 8.4 0 013 11.5 8.4 8.4 0 0112 3a8.4 8.4 0 019 8.5z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+            </svg>
+            {{ abriendoChat() ? 'Abriendo chat…' : 'Enviar mensaje al dueño' }}
+          </button>
+        } @else {
+          <div class="cta-sesion">
+            <p>Iniciá sesión para escribirle al dueño</p>
+            <a routerLink="/login" class="boton boton--teal">Iniciar sesión</a>
+          </div>
+        }
+      }
+    </section>
+
+    <!-- Características -------------------------------------------------- -->
+    @if (p.caracteristicas.length) {
+      <section class="bloque">
+        <h2>¿Qué ofrece este lugar?</h2>
+        <ul class="caracteristicas">
+          @for (c of p.caracteristicas; track c.id) {
+            <li>
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" class="check">
+                <path
+                  d="M5 13l4 4L19 7"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span>{{ c.nombre }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <!-- Disponibilidad --------------------------------------------------- -->
+    <section class="bloque disponibilidad">
+      <h2>Fechas disponibles</h2>
+      @if (ocupados().length) {
+        <p class="disponibilidad__intro">
+          Estas fechas ya están tomadas. El resto del calendario está libre.
+        </p>
+        <ul class="ocupados">
+          @for (rango of ocupados(); track rango.entrada + rango.salida) {
+            <li>{{ rangoLegible(rango) }}</li>
+          }
+        </ul>
+      } @else {
+        <p class="disponibilidad__intro">
+          Esta propiedad no tiene reservas registradas: todas las fechas están libres.
+        </p>
+      }
+
+      <button type="button" class="boton boton--dorado boton--grande" (click)="reservar()">
+        Reservar
+      </button>
+    </section>
+
+    <!-- Políticas -------------------------------------------------------- -->
+    @if (tienePoliticas()) {
+      <section class="bloque">
+        <h2>Qué tenés que saber</h2>
+        <div class="politicas">
+          @if (p.normas) {
+            <article>
+              <h3>Normas de la casa</h3>
+              <p>{{ p.normas }}</p>
+            </article>
+          }
+          @if (p.saludYSeguridad) {
+            <article>
+              <h3>Salud y seguridad</h3>
+              <p>{{ p.saludYSeguridad }}</p>
+            </article>
+          }
+          @if (p.politicaCancelacion) {
+            <article>
+              <h3>Política de cancelación</h3>
+              <p>{{ p.politicaCancelacion }}</p>
+            </article>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Mapa ------------------------------------------------------------- -->
+    @if (mapaUrl(); as mapa) {
+      <section class="bloque">
+        <h2>Zona de la propiedad</h2>
+        <div class="mapa">
+          <iframe
+            [src]="mapa"
+            loading="lazy"
+            title="Mapa de la zona de la propiedad"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+        @if (mapaEnlace(); as enlace) {
+          <a class="mapa__enlace" [href]="enlace" target="_blank" rel="noopener noreferrer">
+            Ver mapa más grande
+          </a>
+        }
+      </section>
+    }
+
+    <!-- Reseñas ---------------------------------------------------------- -->
+    <section class="bloque">
+      <h2>Reseñas</h2>
+      @if (resenas().length) {
+        <div class="resumen-resenas">
+          <span class="resumen-resenas__nota">{{ promedioTexto() }}</span>
+          <div>
+            <app-estrellas [valor]="promedio()" />
+            <p class="resumen-resenas__cantidad">
+              {{ cantidadResenas() }}
+              {{ cantidadResenas() === 1 ? 'reseña' : 'reseñas' }}
+            </p>
+          </div>
+        </div>
+
+        <ul class="resenas">
+          @for (r of resenas(); track r.id) {
+            <li class="resena">
+              <div class="resena__cabecera">
+                <span class="resena__autor">{{ r.autor }}</span>
+                <span class="resena__fecha">{{ fecha(r.creadaEn) }}</span>
+              </div>
+              <app-estrellas [valor]="r.puntaje" />
+              @if (r.comentario) {
+                <p class="resena__comentario">{{ r.comentario }}</p>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="vacio">Todavía no hay reseñas de esta propiedad</p>
+      }
+    </section>
+
+    <!-- Ocupantes (solo el dueño) ---------------------------------------- -->
+    @if (esDuenio() && ocupantes().length) {
+      <section class="bloque">
+        <h2>Quién se aloja acá</h2>
+        <ul class="ocupantes">
+          @for (o of ocupantes(); track o.id) {
+            <li>
+              <span class="ocupantes__nombre">
+                {{ o.huesped.nombre }} {{ o.huesped.apellido }}
+              </span>
+              <span class="ocupantes__fechas">
+                del {{ fechaCorta(o.entrada) }} al {{ fecha(o.salida) }}
+              </span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  </main>
+
+  <!-- Visor a pantalla completa ------------------------------------------ -->
+  @if (visor() !== null) {
+    <div
+      class="visor"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Visor de imágenes"
+      (click)="cerrarVisor()"
+    >
+      <button type="button" class="visor__cerrar" (click)="cerrarVisor()" aria-label="Cerrar">
+        &times;
+      </button>
+
+      @if (imagenes().length > 1) {
+        <button
+          type="button"
+          class="visor__nav visor__nav--prev"
+          (click)="anterior($event)"
+          aria-label="Imagen anterior"
+        >
+          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+            <path
+              d="M15 19l-7-7 7-7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      }
+
+      <figure class="visor__figura" (click)="$event.stopPropagation()">
+        <img [src]="imagenes()[visor()!].url" [alt]="imagenes()[visor()!].titulo || p.titulo" />
+        <figcaption>{{ visor()! + 1 }} de {{ imagenes().length }}</figcaption>
+      </figure>
+
+      @if (imagenes().length > 1) {
+        <button
+          type="button"
+          class="visor__nav visor__nav--next"
+          (click)="siguiente($event)"
+          aria-label="Imagen siguiente"
+        >
+          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+            <path
+              d="M9 5l7 7-7 7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      }
+    </div>
+  }
+}

@@ -1,0 +1,264 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+.barra {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  height: $navbar-h;
+  background-color: $Dark;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+.barra__interior {
+  max-width: $mx-w;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 $navbar-padding-h;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+// Marca ---------------------------------------------------------------------
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.marca__icono {
+  width: 46px;
+  height: 46px;
+}
+
+.marca__texto {
+  font-family: $fontSerif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: $colorFondo;
+  white-space: nowrap;
+}
+
+// Menú ----------------------------------------------------------------------
+
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.menu__enlaces,
+.menu__acciones {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.enlace {
+  color: $colorFondo;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 6px 2px;
+  border-bottom: 2px solid transparent;
+  transition: color 180ms ease, border-color 180ms ease;
+
+  &:hover {
+    color: $colorPpal;
+  }
+
+  &.activo {
+    color: $colorPpal;
+    border-bottom-color: $colorPpal;
+  }
+}
+
+.enlace--badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  background-color: $colorAccent;
+  color: $light;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+}
+
+// Botones sin sesión --------------------------------------------------------
+
+.boton {
+  @include links();
+  display: inline-block;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transition: filter 180ms ease;
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+}
+
+// Variante secundaria: mismo tamaño, sin relleno, para no competir con el CTA.
+.boton--fantasma {
+  background-color: transparent;
+  color: $colorPpal;
+
+  &:hover {
+    background-color: rgba($colorPpal, 0.14);
+    filter: none;
+  }
+}
+
+// Usuario con sesión --------------------------------------------------------
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 20px;
+  border-left: 1px solid rgba($colorFondo, 0.2);
+}
+
+.usuario__avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: $colorPpal;
+  color: $Dark;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.usuario__saludo {
+  color: $colorFondo;
+  font-size: 0.9rem;
+  white-space: nowrap;
+
+  @include breakpoint-down('large') {
+    display: none;
+  }
+}
+
+.salir {
+  background: none;
+  border: 1px solid rgba($colorFondo, 0.35);
+  border-radius: 5px;
+  color: $colorFondo;
+  font-family: inherit;
+  font-size: 0.82rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 180ms ease, border-color 180ms ease;
+
+  &:hover {
+    background-color: rgba($colorAccent, 0.9);
+    border-color: $colorAccent;
+  }
+}
+
+// Hamburguesa ---------------------------------------------------------------
+
+.hamburguesa {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 42px;
+  height: 42px;
+  padding: 0 9px;
+  background: none;
+  border: 1px solid rgba($colorFondo, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.hamburguesa__linea {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background-color: $colorFondo;
+  border-radius: 2px;
+}
+
+// Móvil ---------------------------------------------------------------------
+
+@include breakpoint-down('medium') {
+  .hamburguesa {
+    display: flex;
+  }
+
+  .menu {
+    // Panel desplegable anclado bajo la barra fija.
+    position: absolute;
+    top: $navbar-h;
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 16px $navbar-padding-h 20px;
+    background-color: $Dark;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .menu--abierto {
+    display: flex;
+  }
+
+  .menu__enlaces,
+  .menu__acciones {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  .enlace {
+    padding: 12px 4px;
+    border-bottom: 1px solid rgba($colorFondo, 0.12);
+
+    &.activo {
+      border-bottom-color: $colorPpal;
+    }
+  }
+
+  .boton {
+    text-align: center;
+    padding: 12px;
+  }
+
+  .usuario {
+    flex-wrap: wrap;
+    padding: 12px 0 0;
+    border-left: none;
+    border-top: 1px solid rgba($colorFondo, 0.2);
+  }
+
+  .usuario__saludo {
+    display: inline;
+  }
+
+  .salir {
+    margin-left: auto;
+  }
+}

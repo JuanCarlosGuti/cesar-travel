@@ -1,0 +1,32 @@
+# Blueprint de Render (plan gratuito): render.com → New → Blueprint → elegir este repo.
+#
+# Monorepo con npm workspaces (un solo package-lock en la raíz), así que TODO se instala y
+# construye desde la raíz: instalar por subcarpeta deja node_modules donde el runtime no
+# los encuentra.
+#   build → npm ci + npm run build (Angular → backend/public, y compila el backend)
+#   start → npm run start:prod (node dist/main.js con cwd en backend/)
+#
+# Base de datos: DATABASE_URL apunta a un Postgres externo (Neon tiene plan gratuito
+# permanente). Sin esa variable el backend cae a SQLite, que en Render NO sirve: el
+# sistema de archivos es efímero y se perdería todo en cada despliegue.
+#
+# Plan gratis: el servicio se duerme tras ~15 min sin visitas y la siguiente petición
+# tarda ~50 s en despertarlo.
+
+services:
+  - type: web
+    name: cesar-travel
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /api/municipios
+    envVars:
+      - key: NODE_VERSION
+        value: 24.15.0
+      # Cadena de conexión de Postgres (Neon): postgresql://usuario:clave@host/base?sslmode=require
+      - key: DATABASE_URL
+        sync: false
+      # Clave de firma de los JWT: generar con `openssl rand -base64 32`
+      - key: JWT_SECRET
+        sync: false

@@ -1,0 +1,21 @@
+# dependencias
+node_modules/
+
+# builds
+dist/
+backend/public/
+.angular/
+
+# base SQLite de desarrollo (se regenera sola con el seed al arrancar)
+*.db
+*.db-shm
+*.db-wal
+
+# entorno
+.env
+.env.local
+
+# editores / sistema
+.DS_Store
+.idea/
+*.log

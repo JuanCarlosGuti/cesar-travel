@@ -1,0 +1,145 @@
+<section class="auth">
+  <div class="tarjeta">
+    <header class="tarjeta__cabecera">
+      <app-canaguate-mark class="tarjeta__icono" />
+      <h1 class="tarjeta__titulo">Crear cuenta</h1>
+      <p class="tarjeta__bajada">Un solo paso para reservar en el Cesar y La Guajira.</p>
+    </header>
+
+    @if (error()) {
+      <p class="alerta" role="alert">{{ error() }}</p>
+    }
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+      <div class="fila">
+        <div class="campo">
+          <label class="campo__etiqueta" for="nombre">Nombre</label>
+          <input
+            id="nombre"
+            type="text"
+            class="campo__control"
+            formControlName="nombre"
+            autocomplete="given-name"
+            placeholder="María"
+          />
+          @if (nombre.touched && nombre.errors) {
+            <p class="campo__error">
+              @if (nombre.errors['required']) {
+                El nombre es obligatorio.
+              } @else {
+                Debe tener al menos 2 caracteres.
+              }
+            </p>
+          }
+        </div>
+
+        <div class="campo">
+          <label class="campo__etiqueta" for="apellido">Apellido</label>
+          <input
+            id="apellido"
+            type="text"
+            class="campo__control"
+            formControlName="apellido"
+            autocomplete="family-name"
+            placeholder="Ramírez"
+          />
+          @if (apellido.touched && apellido.errors) {
+            <p class="campo__error">
+              @if (apellido.errors['required']) {
+                El apellido es obligatorio.
+              } @else {
+                Debe tener al menos 2 caracteres.
+              }
+            </p>
+          }
+        </div>
+      </div>
+
+      <div class="campo">
+        <label class="campo__etiqueta" for="email">Correo electrónico</label>
+        <input
+          id="email"
+          type="email"
+          class="campo__control"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="tucorreo@ejemplo.com"
+        />
+        @if (email.touched && email.errors) {
+          <p class="campo__error">
+            @if (email.errors['required']) {
+              El correo es obligatorio.
+            } @else {
+              Ingresá un correo válido.
+            }
+          </p>
+        }
+      </div>
+
+      <div class="campo">
+        <label class="campo__etiqueta" for="telefono">Celular (opcional)</label>
+        <input
+          id="telefono"
+          type="tel"
+          class="campo__control"
+          formControlName="telefono"
+          autocomplete="tel-national"
+          inputmode="numeric"
+          placeholder="3001234567"
+        />
+        @if (telefono.touched && telefono.errors) {
+          <p class="campo__error">Debe ser un celular de 10 dígitos que empiece por 3.</p>
+        }
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <label class="campo__etiqueta" for="password">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            class="campo__control"
+            formControlName="password"
+            autocomplete="new-password"
+            placeholder="Mínimo 8 caracteres"
+          />
+          @if (password.touched && password.errors) {
+            <p class="campo__error">
+              @if (password.errors['required']) {
+                La contraseña es obligatoria.
+              } @else {
+                Debe tener al menos 8 caracteres.
+              }
+            </p>
+          }
+        </div>
+
+        <div class="campo">
+          <label class="campo__etiqueta" for="confirmacion">Repetir contraseña</label>
+          <input
+            id="confirmacion"
+            type="password"
+            class="campo__control"
+            formControlName="confirmacion"
+            autocomplete="new-password"
+            placeholder="Repetí la contraseña"
+          />
+          @if (confirmacion.touched && confirmacion.errors?.['required']) {
+            <p class="campo__error">Confirmá la contraseña.</p>
+          } @else if (confirmacion.touched && formulario.errors?.['noCoinciden']) {
+            <p class="campo__error">Las contraseñas no coinciden.</p>
+          }
+        </div>
+      </div>
+
+      <button type="submit" class="enviar buttonEffect" [disabled]="enviando()">
+        {{ enviando() ? 'Creando cuenta…' : 'Crear cuenta' }}
+      </button>
+    </form>
+
+    <p class="pie">
+      ¿Ya tenés cuenta?
+      <a routerLink="/login" class="pie__enlace">Iniciar sesión</a>
+    </p>
+  </div>
+</section>

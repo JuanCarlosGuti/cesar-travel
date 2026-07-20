@@ -1,0 +1,19 @@
+{
+  "name": "cesar-travel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cesar Travel — alojamientos en el Cesar y La Guajira (monolito NestJS + Angular)",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "start": "npm run start:dev -w backend",
+    "front": "npm run start -w frontend",
+    "build": "npm run build -w frontend && npm run build -w backend",
+    "start:prod": "npm run start:prod -w backend",
+    "seed": "npm run seed -w backend",
+    "test": "npm test -w backend",
+    "test:front": "npm run test -w frontend"
+  }
+}

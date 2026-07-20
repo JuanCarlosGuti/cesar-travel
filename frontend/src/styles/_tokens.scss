@@ -1,0 +1,82 @@
+// Tokens de identidad visual de Cesar Travel — Cesar / La Guajira.
+// Este archivo NO emite CSS: solo variables, mapas y mixins. Por eso puede
+// consumirse desde cualquier componente con `@use '../../styles/tokens' as *;`
+// sin duplicar reglas en el bundle.
+
+@use 'sass:map';
+
+// ---------------------------------------------------------------------------
+// Paleta
+// ---------------------------------------------------------------------------
+
+$colorPpal: #f0a600; // Cañaguate — flor del árbol, color primario
+$colorAccent: #c1502e; // Guajira — tierra roja del desierto, precios/destacados
+$colorSupport: #2e6b4f; // Sierra — verde de la Sierra Nevada, uso puntual
+$Dark: #16283f; // Noche — cielo nocturno guajiro: texto, navbar, footer
+$colorOscuro: #16283f;
+$colorClaro: #0e7b78; // Caribe — mar frente a Cabo de la Vela/Palomino
+$colorFondo: #fbf2de; // Arena — salinas de Manaure: fondo base de la interfaz
+$light: rgb(255, 255, 255);
+$lightGray: rgb(235, 235, 235);
+$backBody: $colorFondo; // el fondo de la interfaz ES Arena (identidad aprobada), no un gris genérico
+$buttonsText: rgb(255, 255, 255);
+
+// Serif cálido para el nombre de la marca y títulos (identidad aprobada) — stack de sistema,
+// sin webfont extra que cargar.
+$fontSerif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+
+// ---------------------------------------------------------------------------
+// Medidas
+// ---------------------------------------------------------------------------
+
+// container general
+$mx-w: 1200px;
+
+// navbar and footer height
+$navbar-h: 80px;
+$navbar-padding-h: 15px;
+$footer-h: 55px;
+
+// ---------------------------------------------------------------------------
+// Breakpoints
+// ---------------------------------------------------------------------------
+
+// 480px, 768px, 1280px
+$breakpoints-up: (
+  'small': '30em',
+  'medium': '48rem',
+  'large': '80em',
+);
+
+// Los valores "down" quedan 1px por debajo del "up" correspondiente para que
+// las dos familias de media queries nunca se solapen.
+$breakpoints-down: (
+  'small': '29.9375em',
+  'medium': '47.8125rem',
+  'large': '79.9375em',
+);
+
+@mixin breakpoint-up($size) {
+  @media (min-width: map.get($breakpoints-up, $size)) {
+    @content;
+  }
+}
+
+@mixin breakpoint-down($size) {
+  @media (max-width: map.get($breakpoints-down, $size)) {
+    @content;
+  }
+}
+
+// Botón/enlace primario de la marca.
+@mixin links() {
+  color: $buttonsText;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 8px 12px;
+  border: 1px solid $colorPpal;
+  border-radius: 5px;
+  background-color: $colorPpal;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+  font-family: 'Poppins', sans-serif;
+}

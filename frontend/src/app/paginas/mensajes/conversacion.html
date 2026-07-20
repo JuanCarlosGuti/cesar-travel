@@ -1,0 +1,54 @@
+<section class="conversacion">
+  <header class="cabecera">
+    <a class="volver" routerLink="/mensajes" aria-label="Volver a la bandeja">‹</a>
+
+    <div class="quien">
+      <h1>{{ conversacion()?.otroUsuario ?? 'Conversación' }}</h1>
+      @if (conversacion(); as datos) {
+        <a class="propiedad" [routerLink]="['/propiedades', datos.propiedadId]">
+          {{ datos.propiedadTitulo }}
+        </a>
+      }
+    </div>
+  </header>
+
+  @if (error(); as mensaje) {
+    <p class="alerta" role="alert">{{ mensaje }}</p>
+  }
+
+  <div class="hilo" #hilo>
+    @if (cargando()) {
+      <p class="estado">Cargando mensajes…</p>
+    } @else if (mensajes().length === 0) {
+      <p class="estado">
+        Todavía no hay mensajes. Escribí el primero para romper el hielo.
+      </p>
+    } @else {
+      @for (mensaje of mensajes(); track mensaje.id) {
+        <article class="burbuja" [class.propia]="propio(mensaje)">
+          <p class="cuerpo">{{ mensaje.cuerpo }}</p>
+          <time class="hora" [attr.datetime]="mensaje.creadoEn">
+            {{ hora(mensaje.creadoEn) }}
+          </time>
+        </article>
+      }
+    }
+  </div>
+
+  <form class="caja" [formGroup]="formulario" (ngSubmit)="enviar()">
+    <input
+      type="text"
+      formControlName="cuerpo"
+      placeholder="Escribí un mensaje…"
+      autocomplete="off"
+      aria-label="Mensaje"
+    />
+    <button
+      type="submit"
+      class="enviar"
+      [disabled]="formulario.controls.cuerpo.value.trim() === '' || enviando()"
+    >
+      {{ enviando() ? 'Enviando…' : 'Enviar' }}
+    </button>
+  </form>
+</section>

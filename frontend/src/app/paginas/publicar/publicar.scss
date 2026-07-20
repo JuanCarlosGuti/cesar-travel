@@ -1,0 +1,283 @@
+@use 'tokens' as *;
+
+.publicar {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.encabezado {
+  margin-bottom: 24px;
+
+  h1 {
+    font-family: $fontSerif;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    color: $Dark;
+    margin: 0 0 6px;
+  }
+
+  p {
+    margin: 0;
+    color: rgba($Dark, 0.7);
+  }
+}
+
+.cargando {
+  color: rgba($Dark, 0.6);
+}
+
+.alerta,
+.aviso {
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin: 0 0 18px;
+  font-size: 0.92rem;
+}
+
+.alerta {
+  background: rgba($colorAccent, 0.1);
+  border-left: 4px solid $colorAccent;
+  color: $colorAccent;
+}
+
+.aviso {
+  background: rgba($colorPpal, 0.15);
+  border-left: 4px solid $colorPpal;
+  color: $Dark;
+}
+
+// Bloques del formulario -----------------------------------------------------
+
+.bloque {
+  border: 1px solid rgba($Dark, 0.12);
+  border-radius: 14px;
+  background: $light;
+  padding: 20px 22px 24px;
+  margin: 0 0 22px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+
+  @include breakpoint-down('medium') {
+    grid-template-columns: 1fr;
+  }
+
+  legend {
+    font-family: $fontSerif;
+    font-size: 1.15rem;
+    color: $Dark;
+    padding: 0 8px;
+  }
+}
+
+.campo {
+  display: block;
+
+  > span {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $Dark;
+    margin-bottom: 6px;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    border: 1px solid rgba($Dark, 0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font: inherit;
+    background: $light;
+    color: $Dark;
+
+    &:focus {
+      outline: 2px solid rgba($colorClaro, 0.45);
+      border-color: $colorClaro;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.campo-ancho {
+  grid-column: 1 / -1;
+}
+
+.error-campo {
+  display: block;
+  margin-top: 5px;
+  color: $colorAccent;
+  font-size: 0.8rem;
+}
+
+.subtitulo {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba($Dark, 0.55);
+  font-weight: 700;
+}
+
+// Servicios ------------------------------------------------------------------
+
+.caracteristicas {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba($Dark, 0.2);
+  background: $colorFondo;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: $Dark;
+  transition: all 0.15s ease;
+
+  input {
+    accent-color: $colorPpal;
+    margin: 0;
+  }
+
+  &:hover {
+    border-color: $colorPpal;
+  }
+
+  &.activo {
+    background: rgba($colorPpal, 0.18);
+    border-color: $colorPpal;
+    font-weight: 600;
+  }
+}
+
+// Imágenes -------------------------------------------------------------------
+
+.cargador {
+  grid-column: 1 / -1;
+  display: block;
+  border: 2px dashed rgba($colorClaro, 0.5);
+  border-radius: 12px;
+  padding: 22px;
+  text-align: center;
+  cursor: pointer;
+  background: rgba($colorClaro, 0.05);
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba($colorClaro, 0.1);
+  }
+
+  input[type='file'] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.cargador-texto {
+  display: block;
+
+  strong {
+    display: block;
+    color: $colorClaro;
+    font-size: 1rem;
+  }
+
+  small {
+    color: rgba($Dark, 0.6);
+  }
+}
+
+.galeria {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+.miniatura {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: $lightGray;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.quitar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: rgba($Dark, 0.75);
+  color: $light;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $colorAccent;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Pie ------------------------------------------------------------------------
+
+.pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.boton-ppal {
+  @include links();
+  cursor: pointer;
+  transition: filter 0.15s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.94);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.boton-texto {
+  color: rgba($Dark, 0.7);
+  text-decoration: underline;
+  font-weight: 600;
+}

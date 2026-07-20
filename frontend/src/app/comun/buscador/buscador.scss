@@ -1,0 +1,101 @@
+@use 'sass:color';
+@use 'tokens' as *;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.buscador {
+  align-items: flex-end;
+  background-color: rgba($light, 0.96);
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  padding: 18px 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.etiqueta {
+  color: rgba($Dark, 0.7);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+
+  em {
+    font-style: normal;
+    font-weight: 400;
+    opacity: 0.6;
+    text-transform: none;
+  }
+}
+
+select,
+input[type='date'] {
+  background-color: $light;
+  border: 1px solid rgba($Dark, 0.18);
+  border-radius: 8px;
+  color: $Dark;
+  font-family: inherit;
+  font-size: 0.95rem;
+  height: 44px;
+  padding: 0 10px;
+  width: 100%;
+
+  &:focus {
+    border-color: $colorClaro;
+    outline: 2px solid rgba($colorClaro, 0.25);
+    outline-offset: 0;
+  }
+}
+
+.boton-buscar {
+  @include links();
+  cursor: pointer;
+  font-size: 0.95rem;
+  height: 44px;
+  min-width: 130px;
+  transition:
+    background-color 160ms ease-in-out,
+    transform 160ms ease-in-out;
+
+  &:hover {
+    background-color: color.adjust($colorPpal, $lightness: -6%);
+  }
+}
+
+// Variante para la cabecera de resultados: fondo más discreto y sin sombra fuerte.
+.buscador.compacto {
+  background-color: $light;
+  box-shadow: 0 3px 12px rgba($Dark, 0.1);
+  padding: 14px 16px;
+}
+
+@include breakpoint-down('medium') {
+  .buscador {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .campo-municipio {
+    grid-column: 1 / -1;
+  }
+
+  .boton-buscar {
+    grid-column: 1 / -1;
+  }
+}
+
+@include breakpoint-down('small') {
+  .buscador {
+    grid-template-columns: 1fr;
+  }
+}

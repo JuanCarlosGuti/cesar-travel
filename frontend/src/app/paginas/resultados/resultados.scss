@@ -1,0 +1,105 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+.contenedor {
+  margin: 0 auto;
+  max-width: $mx-w;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.barra-busqueda {
+  background:
+    radial-gradient(circle at 85% 30%, rgba($colorClaro, 0.35), transparent 55%),
+    linear-gradient(160deg, $Dark 0%, #0d1c2e 100%);
+  padding: 28px 0 32px;
+}
+
+.listado {
+  padding: 36px 0 56px;
+}
+
+.encabezado {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  justify-content: space-between;
+  margin-bottom: 26px;
+
+  h1 {
+    font-family: $fontSerif;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.rango {
+  color: rgba($Dark, 0.6);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.conteo {
+  color: $colorAccent;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.grilla {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.aviso {
+  background-color: rgba($light, 0.7);
+  border: 1px dashed rgba($Dark, 0.18);
+  border-radius: 12px;
+  color: rgba($Dark, 0.65);
+  margin: 0;
+  padding: 28px;
+  text-align: center;
+}
+
+.vacio {
+  background-color: $light;
+  border: 1px solid rgba($Dark, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba($Dark, 0.08);
+  margin: 0 auto;
+  max-width: 620px;
+  padding: 44px 32px;
+  text-align: center;
+
+  h2 {
+    color: $Dark;
+    font-family: $fontSerif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  p {
+    color: rgba($Dark, 0.65);
+    margin: 0;
+  }
+}
+
+@include breakpoint-down('medium') {
+  .grilla {
+    grid-template-columns: 1fr;
+  }
+
+  .rango {
+    display: block;
+    white-space: normal;
+  }
+}

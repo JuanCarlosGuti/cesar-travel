@@ -1,0 +1,67 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+.paginador {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin: 32px 0 8px;
+}
+
+.numero,
+.flecha {
+  background-color: $light;
+  border: 1px solid rgba($Dark, 0.14);
+  border-radius: 8px;
+  color: $Dark;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1;
+  min-width: 40px;
+  padding: 10px 12px;
+  transition:
+    background-color 160ms ease-in-out,
+    border-color 160ms ease-in-out,
+    color 160ms ease-in-out;
+
+  &:hover:not(:disabled):not(.activa) {
+    border-color: $colorPpal;
+    color: $colorAccent;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+}
+
+.flecha {
+  font-size: 1.2rem;
+}
+
+.numero.activa {
+  background-color: $colorPpal;
+  border-color: $colorPpal;
+  color: $buttonsText;
+  cursor: default;
+}
+
+.puntos {
+  color: rgba($Dark, 0.45);
+  padding: 0 2px;
+}
+
+@include breakpoint-down('small') {
+  .numero,
+  .flecha {
+    min-width: 34px;
+    padding: 8px 9px;
+  }
+}

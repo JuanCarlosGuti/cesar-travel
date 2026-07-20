@@ -1,0 +1,185 @@
+@if (cargando()) {
+  <div class="estado">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Cargando…</p>
+  </div>
+} @else if (errorCarga()) {
+  <div class="estado">
+    <p>{{ errorCarga() }}</p>
+    <a routerLink="/" class="boton boton--dorado">Volver al inicio</a>
+  </div>
+} @else if (confirmada(); as reserva) {
+  <!-- Confirmación ------------------------------------------------------- -->
+  <section class="confirmacion contenedor">
+    <div class="confirmacion__sello" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="44" height="44">
+        <path
+          d="M5 13l4 4L19 7"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+
+    <h1>¡Reserva confirmada!</h1>
+    <p class="confirmacion__bajada">
+      Te esperamos en {{ reserva.propiedad.municipio.nombre }}. Guardá estos datos.
+    </p>
+
+    <dl class="resumen-reserva">
+      <div>
+        <dt>Alojamiento</dt>
+        <dd>{{ reserva.propiedad.titulo }}</dd>
+      </div>
+      <div>
+        <dt>Ubicación</dt>
+        <dd>
+          {{ reserva.propiedad.municipio.nombre }}, {{ reserva.propiedad.municipio.departamento }}
+        </dd>
+      </div>
+      <div>
+        <dt>Entrada</dt>
+        <dd>{{ fecha(reserva.entrada) }}</dd>
+      </div>
+      <div>
+        <dt>Salida</dt>
+        <dd>{{ fecha(reserva.salida) }}</dd>
+      </div>
+      @if (reserva.horaLlegada) {
+        <div>
+          <dt>Hora de llegada</dt>
+          <dd>{{ reserva.horaLlegada }}</dd>
+        </div>
+      }
+    </dl>
+
+    <div class="confirmacion__acciones">
+      <a routerLink="/mis-reservas" class="boton boton--dorado">Ver mis reservas</a>
+      <a routerLink="/" class="boton boton--claro">Volver al inicio</a>
+    </div>
+  </section>
+} @else if (propiedad(); as p) {
+  <header class="encabezado">
+    <div class="contenedor">
+      <h1>Confirmá tu reserva</h1>
+      <p>Revisá los datos y elegí las fechas de tu estadía.</p>
+    </div>
+  </header>
+
+  <main class="contenedor pagina">
+    <!-- Resumen de la propiedad ------------------------------------------ -->
+    <aside class="tarjeta-propiedad">
+      @if (p.imagenes.length) {
+        <img [src]="p.imagenes[0].url" [alt]="p.titulo" class="tarjeta-propiedad__imagen" />
+      }
+      <div class="tarjeta-propiedad__datos">
+        <span class="tarjeta-propiedad__categoria">{{ p.categoria.titulo }}</span>
+        <h2>{{ p.titulo }}</h2>
+        <p class="tarjeta-propiedad__ubicacion">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path
+              d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linejoin="round"
+            />
+            <circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="2" />
+          </svg>
+          {{ p.municipio.nombre }}, {{ p.municipio.departamento }}
+        </p>
+        <p class="tarjeta-propiedad__extra">
+          {{ p.habitaciones }} {{ p.habitaciones === 1 ? 'habitación' : 'habitaciones' }} ·
+          {{ p.banos }} {{ p.banos === 1 ? 'baño' : 'baños' }}
+        </p>
+        <a [routerLink]="['/propiedades', p.id]" class="tarjeta-propiedad__enlace">
+          Ver la propiedad
+        </a>
+      </div>
+    </aside>
+
+    <!-- Formulario -------------------------------------------------------- -->
+    <form class="formulario" (submit)="enviar($event)" novalidate>
+      <h2>Tus fechas</h2>
+
+      @if (ocupados().length) {
+        <div class="aviso-ocupados">
+          <strong>Fechas ya reservadas</strong>
+          <ul>
+            @for (r of ocupados(); track r.entrada + r.salida) {
+              <li>{{ rangoLegible(r) }}</li>
+            }
+          </ul>
+        </div>
+      }
+
+      <div class="campos">
+        <label class="campo">
+          <span>Fecha de entrada</span>
+          <input
+            type="date"
+            name="entrada"
+            [value]="entrada()"
+            [min]="hoy"
+            (change)="cambiarEntrada($any($event.target).value)"
+            required
+          />
+        </label>
+
+        <label class="campo">
+          <span>Fecha de salida</span>
+          <input
+            type="date"
+            name="salida"
+            [value]="salida()"
+            [min]="minSalida()"
+            (change)="cambiarSalida($any($event.target).value)"
+            required
+          />
+        </label>
+
+        <label class="campo">
+          <span>Hora de llegada <em>(opcional)</em></span>
+          <select name="horaLlegada" [value]="horaLlegada()" (change)="cambiarHora($any($event.target).value)">
+            <option value="">Sin definir</option>
+            @for (h of horas; track h) {
+              <option [value]="h">{{ h }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      @if (noches() > 0 && !solapa()) {
+        <p class="noches">
+          {{ noches() }} {{ noches() === 1 ? 'noche' : 'noches' }} —
+          del {{ fecha(entrada()) }} al {{ fecha(salida()) }}
+        </p>
+      }
+
+      @if (errorFechas(); as e) {
+        <p class="error">{{ e }}</p>
+      }
+
+      @if (solapa()) {
+        <p class="error">
+          Esas fechas se cruzan con una reserva existente. Elegí otro rango.
+        </p>
+      }
+
+      @if (errorEnvio(); as e) {
+        <p class="error error--servidor">{{ e }}</p>
+      }
+
+      <button
+        type="submit"
+        class="boton boton--dorado boton--grande"
+        [disabled]="!formularioValido() || enviando()"
+      >
+        {{ enviando() ? 'Confirmando…' : 'Confirmar reserva' }}
+      </button>
+    </form>
+  </main>
+}

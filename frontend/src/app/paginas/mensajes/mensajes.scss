@@ -1,0 +1,174 @@
+@use 'tokens' as *;
+
+.mensajes {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.encabezado {
+  margin-bottom: 24px;
+
+  h1 {
+    font-family: $fontSerif;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    color: $Dark;
+    margin: 0 0 6px;
+  }
+
+  p {
+    margin: 0;
+    color: rgba($Dark, 0.7);
+  }
+}
+
+.alerta {
+  background: rgba($colorAccent, 0.1);
+  border-left: 4px solid $colorAccent;
+  color: $colorAccent;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin: 0 0 18px;
+  font-size: 0.92rem;
+}
+
+.esqueletos {
+  display: grid;
+  gap: 12px;
+}
+
+.esqueleto {
+  height: 86px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, $lightGray 25%, $light 50%, $lightGray 75%);
+  background-size: 200% 100%;
+  animation: brillo 1.4s ease-in-out infinite;
+}
+
+@keyframes brillo {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.vacio {
+  text-align: center;
+  background: $light;
+  border: 1px dashed rgba($Dark, 0.2);
+  border-radius: 16px;
+  padding: 52px 24px;
+
+  h2 {
+    font-family: $fontSerif;
+    color: $Dark;
+    margin: 0 0 8px;
+  }
+
+  p {
+    color: rgba($Dark, 0.7);
+    margin: 0 auto 22px;
+    max-width: 44ch;
+  }
+}
+
+.bandeja {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: $light;
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 0 2px 10px rgba($Dark, 0.07);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba($Dark, 0.12);
+  }
+}
+
+.avatar {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: $colorClaro;
+  color: $light;
+  font-family: $fontSerif;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.texto {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: 2px;
+}
+
+.linea-superior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nombre {
+  color: $Dark;
+  font-size: 1rem;
+}
+
+.badge {
+  flex: 0 0 auto;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: $colorAccent;
+  color: $light;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.propiedad {
+  color: $colorClaro;
+  font-size: 0.82rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.previa {
+  color: rgba($Dark, 0.6);
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boton-ppal {
+  @include links();
+  display: inline-block;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.94);
+  }
+}

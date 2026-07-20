@@ -1,0 +1,15 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// El header y el footer son `position: fixed`, así que el contenido reserva su
+// alto con padding para no quedar tapado.
+.contenido {
+  display: block;
+  padding-top: $navbar-h;
+  padding-bottom: $footer-h;
+  min-height: 100vh;
+}

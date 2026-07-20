@@ -1,0 +1,194 @@
+@use 'tokens' as *;
+
+:host {
+  display: block;
+}
+
+.contenedor {
+  margin: 0 auto;
+  max-width: $mx-w;
+  padding: 0 20px;
+  width: 100%;
+}
+
+// ---------------------------------------------------------------------------
+// Hero
+// ---------------------------------------------------------------------------
+
+.hero {
+  // Noche guajira: azul profundo con dos halos cálidos (cañaguate y mar).
+  background:
+    radial-gradient(circle at 12% 18%, rgba($colorPpal, 0.28), transparent 45%),
+    radial-gradient(circle at 88% 82%, rgba($colorClaro, 0.32), transparent 50%),
+    linear-gradient(160deg, $Dark 0%, #0d1c2e 100%);
+  color: $light;
+  padding: 72px 20px 84px;
+}
+
+.hero-contenido {
+  margin: 0 auto;
+  max-width: $mx-w;
+}
+
+.antetitulo {
+  color: $colorPpal;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: $fontSerif;
+  font-size: clamp(2rem, 4.6vw, 3.2rem);
+  font-weight: 600;
+  line-height: 1.12;
+  margin: 0 0 16px;
+  max-width: 18ch;
+}
+
+.bajada {
+  color: rgba($light, 0.8);
+  font-size: 1.05rem;
+  margin: 0 0 32px;
+  max-width: 56ch;
+}
+
+// ---------------------------------------------------------------------------
+// Secciones
+// ---------------------------------------------------------------------------
+
+.seccion {
+  padding: 56px 0;
+}
+
+.categorias-seccion {
+  background-color: rgba($light, 0.55);
+}
+
+.seccion-encabezado {
+  margin-bottom: 28px;
+
+  h2 {
+    font-family: $fontSerif;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    font-weight: 600;
+    margin: 0 0 6px;
+    position: relative;
+  }
+
+  p {
+    color: rgba($Dark, 0.65);
+    margin: 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Categorías
+// ---------------------------------------------------------------------------
+
+.grilla-categorias {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.categoria {
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba($Dark, 0.12);
+  display: block;
+  overflow: hidden;
+  position: relative;
+  transition:
+    transform 200ms ease-in-out,
+    box-shadow 200ms ease-in-out;
+
+  img,
+  .categoria-vacia {
+    display: block;
+    height: 190px;
+    object-fit: cover;
+    transition: transform 400ms ease-in-out;
+    width: 100%;
+  }
+
+  .categoria-vacia {
+    background: linear-gradient(135deg, $colorClaro, $Dark);
+  }
+
+  // Velo oscuro para que el título se lea sobre cualquier foto.
+  &::after {
+    background: linear-gradient(to top, rgba($Dark, 0.85) 8%, rgba($Dark, 0) 62%);
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
+
+  &:hover {
+    box-shadow: 0 12px 26px rgba($Dark, 0.22);
+    transform: translateY(-4px);
+
+    img {
+      transform: scale(1.07);
+    }
+  }
+}
+
+.categoria-titulo {
+  bottom: 14px;
+  color: $light;
+  font-family: $fontSerif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  left: 16px;
+  position: absolute;
+  right: 16px;
+  z-index: 1;
+}
+
+// ---------------------------------------------------------------------------
+// Recomendaciones
+// ---------------------------------------------------------------------------
+
+.grilla-propiedades {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.aviso {
+  background-color: rgba($light, 0.7);
+  border: 1px dashed rgba($Dark, 0.18);
+  border-radius: 12px;
+  color: rgba($Dark, 0.65);
+  margin: 0;
+  padding: 28px;
+  text-align: center;
+}
+
+// ---------------------------------------------------------------------------
+// Responsive
+// ---------------------------------------------------------------------------
+
+@include breakpoint-down('large') {
+  .grilla-categorias {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@include breakpoint-down('medium') {
+  .hero {
+    padding: 48px 16px 56px;
+  }
+
+  .grilla-propiedades {
+    grid-template-columns: 1fr;
+  }
+}
+
+@include breakpoint-down('small') {
+  .grilla-categorias {
+    grid-template-columns: 1fr;
+  }
+}

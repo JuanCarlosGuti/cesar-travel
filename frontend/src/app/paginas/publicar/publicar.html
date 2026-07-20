@@ -1,0 +1,246 @@
+<section class="publicar">
+  <header class="encabezado">
+    <h1>{{ edicion() ? 'Editar propiedad' : 'Publicar propiedad' }}</h1>
+    <p>
+      {{
+        edicion()
+          ? 'Actualizá los datos y las fotos de tu alojamiento.'
+          : 'Contale al mundo cómo es tu alojamiento en el Cesar o La Guajira.'
+      }}
+    </p>
+  </header>
+
+  @if (cargando()) {
+    <p class="cargando">Cargando formulario…</p>
+  } @else {
+    @if (aviso(); as mensaje) {
+      <p class="aviso" role="status">{{ mensaje }}</p>
+    }
+    @if (error(); as mensaje) {
+      <p class="alerta" role="alert">{{ mensaje }}</p>
+    }
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <!-- Datos básicos -->
+      <fieldset class="bloque">
+        <legend>Datos del alojamiento</legend>
+
+        <label class="campo campo-ancho">
+          <span>Título</span>
+          <input
+            type="text"
+            formControlName="titulo"
+            maxlength="120"
+            placeholder="Cabaña frente al mar en Palomino"
+          />
+          @if (formulario.controls.titulo.touched && formulario.controls.titulo.invalid) {
+            <small class="error-campo">Escribí un título de hasta 120 caracteres.</small>
+          }
+        </label>
+
+        <label class="campo">
+          <span>Categoría</span>
+          <select formControlName="categoriaId">
+            <option [ngValue]="null" disabled>Elegí una categoría</option>
+            @for (categoria of categorias(); track categoria.id) {
+              <option [ngValue]="categoria.id">{{ categoria.titulo }}</option>
+            }
+          </select>
+          @if (
+            formulario.controls.categoriaId.touched && formulario.controls.categoriaId.invalid
+          ) {
+            <small class="error-campo">Elegí una categoría.</small>
+          }
+        </label>
+
+        <label class="campo">
+          <span>Municipio</span>
+          <select formControlName="municipioId">
+            <option [ngValue]="null" disabled>Elegí un municipio</option>
+            @for (municipio of municipios(); track municipio.id) {
+              <option [ngValue]="municipio.id">
+                {{ municipio.nombre }}, {{ municipio.departamento }}
+              </option>
+            }
+          </select>
+          @if (
+            formulario.controls.municipioId.touched && formulario.controls.municipioId.invalid
+          ) {
+            <small class="error-campo">Elegí un municipio.</small>
+          }
+        </label>
+
+        <label class="campo">
+          <span>Habitaciones</span>
+          <input type="number" min="1" formControlName="habitaciones" />
+          @if (
+            formulario.controls.habitaciones.touched && formulario.controls.habitaciones.invalid
+          ) {
+            <small class="error-campo">Tiene que haber al menos una habitación.</small>
+          }
+        </label>
+
+        <label class="campo">
+          <span>Baños</span>
+          <input type="number" min="1" formControlName="banos" />
+          @if (formulario.controls.banos.touched && formulario.controls.banos.invalid) {
+            <small class="error-campo">Tiene que haber al menos un baño.</small>
+          }
+        </label>
+
+        <label class="campo campo-ancho">
+          <span>Dirección</span>
+          <input
+            type="text"
+            formControlName="direccion"
+            placeholder="Calle 3 # 12-45, barrio El Centro"
+          />
+          @if (formulario.controls.direccion.touched && formulario.controls.direccion.invalid) {
+            <small class="error-campo">Escribí la dirección del alojamiento.</small>
+          }
+        </label>
+
+        <label class="campo campo-ancho">
+          <span>Descripción</span>
+          <textarea
+            formControlName="descripcion"
+            rows="5"
+            placeholder="Contá cómo es el lugar, qué se ve, qué hay cerca…"
+          ></textarea>
+          @if (
+            formulario.controls.descripcion.touched && formulario.controls.descripcion.invalid
+          ) {
+            <small class="error-campo">La descripción es obligatoria.</small>
+          }
+        </label>
+      </fieldset>
+
+      <!-- Servicios -->
+      <fieldset class="bloque">
+        <legend>Servicios</legend>
+
+        <div class="caracteristicas">
+          @for (caracteristica of caracteristicas(); track caracteristica.id) {
+            <label class="chip" [class.activo]="tildada(caracteristica.id)">
+              <input
+                type="checkbox"
+                [checked]="tildada(caracteristica.id)"
+                (change)="alternar(caracteristica.id)"
+              />
+              <span>{{ caracteristica.nombre }}</span>
+            </label>
+          }
+        </div>
+
+        @if (
+          formulario.controls.caracteristicaIds.touched &&
+          formulario.controls.caracteristicaIds.invalid
+        ) {
+          <small class="error-campo">Elegí al menos un servicio.</small>
+        }
+      </fieldset>
+
+      <!-- Imágenes -->
+      <fieldset class="bloque">
+        <legend>Fotos</legend>
+
+        @if (edicion() && imagenesExistentes().length > 0) {
+          <p class="subtitulo">Fotos publicadas</p>
+          <ul class="galeria">
+            @for (imagen of imagenesExistentes(); track imagen.id) {
+              <li class="miniatura">
+                <img [src]="imagen.url" [alt]="imagen.titulo ?? 'Foto de la propiedad'" />
+                <button
+                  type="button"
+                  class="quitar"
+                  [disabled]="eliminandoImagen() === imagen.id"
+                  aria-label="Eliminar foto publicada"
+                  (click)="eliminarImagen(imagen)"
+                >
+                  ×
+                </button>
+              </li>
+            }
+          </ul>
+        }
+
+        <label class="cargador">
+          <input
+            type="file"
+            multiple
+            accept="image/jpeg,image/png,image/webp"
+            (change)="elegirArchivos($event)"
+          />
+          <span class="cargador-texto">
+            <strong>Agregá fotos</strong>
+            <small>JPG, PNG o WEBP. Podés elegir varias a la vez.</small>
+          </span>
+        </label>
+
+        @if (nuevosArchivos().length > 0) {
+          <p class="subtitulo">Fotos por subir ({{ nuevosArchivos().length }})</p>
+          <ul class="galeria">
+            @for (item of nuevosArchivos(); track item.previa; let i = $index) {
+              <li class="miniatura">
+                <img [src]="item.previa" [alt]="item.archivo.name" />
+                <button
+                  type="button"
+                  class="quitar"
+                  aria-label="Quitar foto de la selección"
+                  (click)="quitarArchivo(i)"
+                >
+                  ×
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </fieldset>
+
+      <!-- Políticas -->
+      <fieldset class="bloque">
+        <legend>Políticas de la casa</legend>
+
+        <label class="campo campo-ancho">
+          <span>Normas</span>
+          <textarea
+            formControlName="normas"
+            rows="3"
+            placeholder="Horarios de check in y check out, mascotas, fiestas…"
+          ></textarea>
+        </label>
+
+        <label class="campo campo-ancho">
+          <span>Salud y seguridad</span>
+          <textarea
+            formControlName="saludYSeguridad"
+            rows="3"
+            placeholder="Detector de humo, botiquín, protocolos de limpieza…"
+          ></textarea>
+        </label>
+
+        <label class="campo campo-ancho">
+          <span>Política de cancelación</span>
+          <textarea
+            formControlName="politicaCancelacion"
+            rows="3"
+            placeholder="Hasta cuándo se puede cancelar y con qué reembolso"
+          ></textarea>
+        </label>
+      </fieldset>
+
+      <div class="pie">
+        <a class="boton-texto" routerLink="/mis-propiedades">Volver a mis propiedades</a>
+        <button type="submit" class="boton-ppal" [disabled]="guardando()">
+          {{
+            guardando()
+              ? 'Guardando…'
+              : edicion()
+                ? 'Guardar cambios'
+                : 'Publicar propiedad'
+          }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

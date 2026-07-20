@@ -1,0 +1,72 @@
+<section class="mis-propiedades">
+  <header class="encabezado">
+    <div>
+      <h1>Mis propiedades</h1>
+      <p>Administrá los alojamientos que publicaste.</p>
+    </div>
+    <a class="boton-ppal" routerLink="/publicar">Publicar propiedad</a>
+  </header>
+
+  @if (error(); as mensaje) {
+    <p class="alerta" role="alert">{{ mensaje }}</p>
+  }
+
+  @if (cargando()) {
+    <div class="grilla" aria-hidden="true">
+      @for (item of [1, 2, 3, 4]; track item) {
+        <div class="esqueleto"></div>
+      }
+    </div>
+  } @else if (vacio()) {
+    <div class="vacio">
+      <h2>Todavía no publicaste ninguna propiedad</h2>
+      <p>Compartí tu casa, finca o cabaña con quienes visitan el Cesar y La Guajira.</p>
+      <a class="boton-ppal" routerLink="/publicar">Publicar mi primera propiedad</a>
+    </div>
+  } @else {
+    <ul class="grilla">
+      @for (propiedad of visibles(); track propiedad.id) {
+        <li class="tarjeta">
+          <div class="portada">
+            @if (propiedad.imagenPortada; as imagen) {
+              <img [src]="imagen" [alt]="propiedad.titulo" loading="lazy" />
+            } @else {
+              <div class="sin-imagen" aria-hidden="true">Sin fotos</div>
+            }
+          </div>
+
+          <div class="cuerpo">
+            <p class="categoria">{{ propiedad.categoria.titulo }}</p>
+            <h2 class="titulo">{{ propiedad.titulo }}</h2>
+            <p class="ubicacion">
+              {{ propiedad.direccion }} · {{ propiedad.municipio.nombre }},
+              {{ propiedad.municipio.departamento }}
+            </p>
+            <p class="detalles">
+              {{ propiedad.habitaciones }} hab. · {{ propiedad.banos }} baños
+            </p>
+
+            <div class="acciones">
+              <a class="boton-ppal" [routerLink]="['/publicar', propiedad.id]">Editar</a>
+              <button
+                type="button"
+                class="boton-borde"
+                [disabled]="eliminando() === propiedad.id"
+                (click)="eliminar(propiedad)"
+              >
+                {{ eliminando() === propiedad.id ? 'Eliminando…' : 'Eliminar' }}
+              </button>
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+
+    <app-paginador
+      [total]="total()"
+      [porPagina]="POR_PAGINA"
+      [pagina]="pagina()"
+      (cambio)="cambiarPagina($event)"
+    />
+  }
+</section>

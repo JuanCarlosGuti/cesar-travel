@@ -1,0 +1,65 @@
+@use 'tokens' as *;
+
+:host {
+  display: inline-block;
+}
+
+.estrellas {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+}
+
+.fila {
+  display: flex;
+  gap: 2px;
+}
+
+.estrella {
+  display: inline-flex;
+  line-height: 0;
+
+  svg {
+    fill: rgba($Dark, 0.18);
+    height: 16px;
+    transition: fill 160ms ease-in-out;
+    width: 16px;
+  }
+
+  &.activa svg {
+    fill: $colorPpal;
+  }
+}
+
+.cantidad {
+  color: rgba($Dark, 0.65);
+  font-size: 0.8rem;
+}
+
+.sin-resenas {
+  color: rgba($Dark, 0.45);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+// Modo formulario: estrellas más grandes y con feedback al pasar el mouse.
+.interactivo {
+  .estrella {
+    cursor: pointer;
+
+    svg {
+      height: 30px;
+      width: 30px;
+    }
+
+    &:focus-visible {
+      border-radius: 4px;
+      outline: 2px solid $colorClaro;
+      outline-offset: 2px;
+    }
+
+    &:hover svg {
+      transform: scale(1.12);
+    }
+  }
+}

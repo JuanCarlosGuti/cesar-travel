@@ -1,0 +1,37 @@
+<form class="buscador" [class.compacto]="compacto()" (submit)="$event.preventDefault(); buscar()">
+  <label class="campo campo-municipio">
+    <span class="etiqueta">¿A dónde vas?</span>
+    <select #selMunicipio (change)="elegirMunicipio(selMunicipio.value)">
+      <option value="">Todos los destinos</option>
+      @for (municipio of municipios(); track municipio.id) {
+        <option [value]="municipio.id" [selected]="municipio.id === municipioId()">
+          {{ municipio.nombre }}, {{ municipio.departamento }}
+        </option>
+      }
+    </select>
+  </label>
+
+  <label class="campo">
+    <span class="etiqueta">Entrada <em>(opcional)</em></span>
+    <input
+      type="date"
+      #inpDesde
+      [min]="hoy"
+      [value]="desde() ?? ''"
+      (change)="elegirDesde(inpDesde.value)"
+    />
+  </label>
+
+  <label class="campo">
+    <span class="etiqueta">Salida <em>(opcional)</em></span>
+    <input
+      type="date"
+      #inpHasta
+      [min]="minSalida()"
+      [value]="hasta() ?? ''"
+      (change)="elegirHasta(inpHasta.value)"
+    />
+  </label>
+
+  <button type="submit" class="boton-buscar buttonEffect">Buscar</button>
+</form>

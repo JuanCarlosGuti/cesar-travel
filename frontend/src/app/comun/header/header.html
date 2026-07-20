@@ -1,0 +1,54 @@
+<header class="barra">
+  <div class="barra__interior">
+    <a class="marca" routerLink="/" aria-label="Cesar Travel — inicio">
+      <app-canaguate-mark class="marca__icono" />
+      <span class="marca__texto">Cesar Travel</span>
+    </a>
+
+    <button
+      type="button"
+      class="hamburguesa"
+      [attr.aria-expanded]="menuAbierto()"
+      aria-controls="menu-principal"
+      aria-label="Abrir menú"
+      (click)="alternarMenu()"
+    >
+      <span class="hamburguesa__linea"></span>
+      <span class="hamburguesa__linea"></span>
+      <span class="hamburguesa__linea"></span>
+    </button>
+
+    <nav id="menu-principal" class="menu" [class.menu--abierto]="menuAbierto()">
+      @if (sesion.autenticado()) {
+        <div class="menu__enlaces">
+          <a routerLink="/publicar" routerLinkActive="activo" class="enlace">Publicar propiedad</a>
+          <a routerLink="/mis-propiedades" routerLinkActive="activo" class="enlace">
+            Mis Propiedades
+          </a>
+          <a routerLink="/mis-reservas" routerLinkActive="activo" class="enlace">Mis Reservas</a>
+          <a routerLink="/mensajes" routerLinkActive="activo" class="enlace enlace--badge">
+            Mensajes
+            @if (sinLeer() > 0) {
+              <span class="badge" [attr.aria-label]="sinLeer() + ' mensajes sin leer'">
+                {{ sinLeer() > 99 ? '99+' : sinLeer() }}
+              </span>
+            }
+          </a>
+        </div>
+
+        <div class="usuario">
+          <span class="usuario__avatar" aria-hidden="true">{{ iniciales() }}</span>
+          <span class="usuario__saludo">
+            Hola, {{ sesion.usuario()?.nombre }} {{ sesion.usuario()?.apellido }}
+          </span>
+          <button type="button" class="salir" (click)="cerrarSesion()">Cerrar sesión</button>
+        </div>
+      } @else {
+        <div class="menu__acciones">
+          <a routerLink="/registro" class="boton boton--fantasma">Crear cuenta</a>
+          <a routerLink="/login" class="boton">Iniciar sesión</a>
+        </div>
+      }
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,60 @@
+<section class="auth">
+  <div class="tarjeta">
+    <header class="tarjeta__cabecera">
+      <app-canaguate-mark class="tarjeta__icono" />
+      <h1 class="tarjeta__titulo">Iniciar sesión</h1>
+      <p class="tarjeta__bajada">Entrá para reservar y administrar tus propiedades.</p>
+    </header>
+
+    @if (error()) {
+      <p class="alerta" role="alert">{{ error() }}</p>
+    }
+
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+      <div class="campo">
+        <label class="campo__etiqueta" for="email">Correo electrónico</label>
+        <input
+          id="email"
+          type="email"
+          class="campo__control"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="tucorreo@ejemplo.com"
+        />
+        @if (email.touched && email.errors) {
+          <p class="campo__error">
+            @if (email.errors['required']) {
+              El correo es obligatorio.
+            } @else {
+              Ingresá un correo válido.
+            }
+          </p>
+        }
+      </div>
+
+      <div class="campo">
+        <label class="campo__etiqueta" for="password">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          class="campo__control"
+          formControlName="password"
+          autocomplete="current-password"
+          placeholder="Tu contraseña"
+        />
+        @if (password.touched && password.errors) {
+          <p class="campo__error">La contraseña es obligatoria.</p>
+        }
+      </div>
+
+      <button type="submit" class="enviar buttonEffect" [disabled]="enviando()">
+        {{ enviando() ? 'Entrando…' : 'Iniciar sesión' }}
+      </button>
+    </form>
+
+    <p class="pie">
+      ¿No tenés cuenta?
+      <a routerLink="/registro" class="pie__enlace">Crear cuenta</a>
+    </p>
+  </div>
+</section>
