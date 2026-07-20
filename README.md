@@ -87,8 +87,10 @@ siguiente petición tarda ~50 segundos en despertarlo.
 - **Reseñas**: solo quien se hospedó y ya terminó su estadía, una por propiedad.
 - **Chat interno** huésped↔anfitrión por propiedad, con no leídos y actualización por sondeo.
   Reemplaza al contacto por WhatsApp: no se expone ningún dato de contacto personal.
-- **Publicar y administrar** propiedades, con carga real de imágenes (se guardan en la base
-  para sobrevivir a los despliegues en plataformas de filesystem efímero).
+- **Publicar y administrar** propiedades, con carga real de imágenes: se optimizan al subirlas
+  (máximo 1600 px de ancho, convertidas a WebP — una foto de celular de 8 MB queda en ~0,6 MB)
+  y se guardan en la base para sobrevivir a los despliegues en plataformas de filesystem
+  efímero.
 
 ## Estructura
 

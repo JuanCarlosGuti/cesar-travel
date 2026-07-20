@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
+import sharp from 'sharp';
 import { UsuarioAutenticado } from '../comun/jwt.guard';
 import { Usuario } from '../auth/entidades/usuario.entity';
 import { Caracteristica } from '../catalogo/entidades/caracteristica.entity';
@@ -17,6 +18,16 @@ import { Propiedad } from './entidades/propiedad.entity';
 
 const TIPOS_IMAGEN_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp'];
 const TAMANIO_MAXIMO_BYTES = 8 * 1024 * 1024;
+
+/**
+ * Optimización de las imágenes que se suben. Una foto de celular ronda los 4-6 MB y no
+ * aporta nada a esa resolución en una web: se reduce a 1600px de ancho y se recomprime
+ * a WebP, con lo que queda en cientos de kilobytes. Importa por dos razones:
+ * las imágenes viven en la base (ver Imagen) y el plan gratuito de Postgres da 0,5 GB,
+ * y además la página carga mucho más rápido para quien la visita.
+ */
+const ANCHO_MAXIMO_PX = 1600;
+const CALIDAD_WEBP = 82;
 
 @Injectable()
 export class PropiedadesService {
@@ -112,12 +123,16 @@ export class PropiedadesService {
       }
     }
 
+    const optimizadas = await Promise.all(
+      archivos.map((archivo) => this.optimizar(archivo)),
+    );
+
     await this.imagenes.save(
-      archivos.map((archivo) =>
+      optimizadas.map((imagen) =>
         this.imagenes.create({
           titulo: propiedad.titulo,
-          tipoMime: archivo.mimetype,
-          datosBase64: archivo.buffer.toString('base64'),
+          tipoMime: imagen.tipoMime,
+          datosBase64: imagen.datos.toString('base64'),
           propiedad,
         }),
       ),
@@ -156,6 +171,32 @@ export class PropiedadesService {
       buffer: Buffer.from(imagen.datosBase64, 'base64'),
       tipoMime: imagen.tipoMime ?? 'application/octet-stream',
     };
+  }
+
+  /**
+   * Reduce la imagen a un tamaño razonable para web y la convierte a WebP.
+   * `withoutEnlargement` evita agrandar (y empeorar) una foto que ya sea pequeña, y
+   * `rotate()` sin argumentos aplica la orientación EXIF: sin eso, las fotos tomadas
+   * en vertical con el celular se guardarían acostadas.
+   *
+   * Si el archivo resulta ilegible para sharp, se rechaza con 400 en vez de guardar
+   * algo que después no se va a poder mostrar.
+   */
+  private async optimizar(
+    archivo: Express.Multer.File,
+  ): Promise<{ datos: Buffer; tipoMime: string }> {
+    try {
+      const datos = await sharp(archivo.buffer)
+        .rotate()
+        .resize({ width: ANCHO_MAXIMO_PX, withoutEnlargement: true })
+        .webp({ quality: CALIDAD_WEBP })
+        .toBuffer();
+      return { datos, tipoMime: 'image/webp' };
+    } catch {
+      throw new BadRequestException(
+        `No se pudo procesar la imagen "${archivo.originalname}": puede estar dañada`,
+      );
+    }
   }
 
   private async aplicar(propiedad: Propiedad, datos: PropiedadDto): Promise<void> {

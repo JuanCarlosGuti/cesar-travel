@@ -20,6 +20,11 @@ Java + MySQL no entran. **Misma funcionalidad, mismo catálogo, misma identidad 
 - **Las imágenes subidas se guardan en la base como base64**, no en disco: el filesystem de
   los planes gratuitos es efímero y se perderían en cada despliegue. Texto base64 y no
   binario porque `bytea` (Postgres) y `blob` (SQLite) no son intercambiables.
+- **Se optimizan antes de guardarlas** (`optimizar()` en `propiedades.service.ts`, con
+  sharp): máximo 1600 px de ancho y conversión a WebP con calidad 82. Medido: una foto de
+  4032×3024 y 7,9 MB queda en 0,58 MB — 14× menos. Importa porque el Postgres gratuito da
+  0,5 GB y porque la página carga más rápido. `rotate()` sin argumentos aplica la
+  orientación EXIF (sin eso, las fotos verticales de celular se guardan acostadas).
 - El seed corre al arrancar **solo si la base está vacía** (`SeedService`), así que es seguro
   en cada despliegue. Los datos de demo viven en `src/database/datos-demo.ts`.
 - Frontend Angular 20 **standalone + signals**, rutas con `loadComponent` (lazy), `@if`/`@for`
