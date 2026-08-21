@@ -19,8 +19,17 @@ jobs:
       # Monorepo con workspaces y un solo package-lock en la raíz: se instala
       # desde la raíz o los módulos quedan donde el runtime no los encuentra.
       - run: npm ci
-      - name: npm test (Jest)
-        run: npm test
+      # Se corre la suite e2e y NO `npm test`. Motivo: el `jest` de
+      # backend/package.json tiene `rootDir: src` y `testRegex: .*\.spec\.ts$`,
+      # y en el repo no hay ni un solo archivo `.spec.ts` — jest sale con
+      # codigo 1 por "no tests found". La unica suite real es
+      # backend/test/reglas-negocio.e2e-spec.ts: seis pruebas contra la API
+      # levantada de verdad, con SQLite en memoria, sin servicios externos.
+      # Prueba solapamiento de reservas, quien puede resenar y quien puede ver
+      # la identidad de los huespedes: exactamente lo que debe frenar un
+      # despliegue. El dia que existan pruebas unitarias, se agrega otro paso.
+      - name: npm run test:e2e (reglas de negocio)
+        run: npm run test:e2e -w backend
 
   frontend:
     name: Frontend (Angular build)
