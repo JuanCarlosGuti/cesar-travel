@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+dist
+**/dist
+backend/public
+.angular
+.git
+.github
+*.db
+*.db-shm
+*.db-wal
+.env
+.env.local
+**/.env

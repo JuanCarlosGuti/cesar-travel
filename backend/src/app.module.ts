@@ -10,6 +10,7 @@ import { Categoria } from './catalogo/entidades/categoria.entity';
 import { Departamento } from './catalogo/entidades/departamento.entity';
 import { Municipio } from './catalogo/entidades/municipio.entity';
 import { ChatModule } from './chat/chat.module';
+import { SaludController } from './comun/salud.controller';
 import { DatabaseModule } from './database/database.module';
 import { SeedService } from './database/seed.service';
 import { Propiedad } from './propiedades/entidades/propiedad.entity';
@@ -42,6 +43,10 @@ import { ReservasModule } from './reservas/reservas.module';
       Propiedad,
     ]),
   ],
+  // El healthcheck del proxy del servidor. Vive aquí y no en un módulo propio
+  // porque no tiene dependencias: solo necesita el DataSource, que TypeOrmModule
+  // ya publica de forma global.
+  controllers: [SaludController],
   providers: [SeedService],
 })
 export class AppModule {}

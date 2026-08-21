@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend (NestJS + Jest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      # Monorepo con workspaces y un solo package-lock en la raíz: se instala
+      # desde la raíz o los módulos quedan donde el runtime no los encuentra.
+      - run: npm ci
+      - name: npm test (Jest)
+        run: npm test
+
+  frontend:
+    name: Frontend (Angular build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      # `ng test` por omisión arranca en modo watch y abre un Chrome visible:
+      # en un runner eso se queda colgado hasta que expire el job. Las dos
+      # banderas son obligatorias, no una preferencia. Se llama al workspace
+      # directamente porque reenviar argumentos a través de dos `npm run`
+      # anidados no es fiable.
+      - name: ng test
+        run: npm run test -w frontend -- --watch=false --browsers=ChromeHeadless
+      # Construir aquí, aparte del docker build, hace que un error de
+      # compilación de Angular salga en su propio job y no escondido dentro de
+      # 200 líneas de salida de Docker.
+      - name: npm run build
+        run: npm run build
+
+  docker-build:
+    name: Docker (verifica que la imagen construya)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: docker build
+        run: docker build -t cesar-travel:ci .
+      # Comprobación barata que ha salvado despliegues en los otros repos: que
+      # el Angular construido esté DENTRO de la imagen. Si el build de Angular
+      # cambia su outputPath, el contenedor arranca igual y sirve 404 en todo
+      # menos /api.
+      - name: Verificar que la SPA quedó dentro de la imagen
+        run: |
+          docker run --rm --entrypoint sh cesar-travel:ci -c \
+            'test -f /app/backend/public/index.html' \
+            || { echo "::error::No hay backend/public/index.html en la imagen"; exit 1; }
+
+  desplegar:
+    name: Desplegar al servidor propio (Kamal)
+    # El despliegue cuelga de TODAS las pruebas. Por esto vive en este workflow
+    # y no en uno aparte: `needs:` no cruza workflows, y partirlo obligaría a
+    # duplicar las pruebas o a dejar el despliegue sin condición.
+    needs: [backend, frontend, docker-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Para publicar la imagen en GHCR con el GITHUB_TOKEN de la ejecución.
+      # No hace falta crear ningún secreto para esto.
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preparar la llave del servidor
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          # Sin -H y solo ed25519: las entradas con hash y de varios tipos hacen
+          # que Net::SSH (el cliente Ruby de Kamal) falle con HostKeyMismatch.
+          ssh-keyscan -t ed25519 159.195.235.225 >> ~/.ssh/known_hosts
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Instalar Kamal
+        run: gem install kamal -v "~> 2.0"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Desplegar
+        env:
+          KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          SEED_ADMIN_PASSWORD: ${{ secrets.SEED_ADMIN_PASSWORD }}
+        run: kamal deploy -c config/deploy.yml

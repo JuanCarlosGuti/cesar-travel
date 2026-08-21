@@ -1,0 +1,119 @@
+# cesar-travel en el servidor propio.
+#
+# UNA sola aplicación de Kamal, a diferencia de UparYa y crearcodecesar: NestJS
+# sirve el Angular ya construido desde backend/public, así que hay un solo
+# proceso, un solo puerto y un solo origen.
+#
+# SIN DOMINIO, A PROPÓSITO (decisión del 20/08/2026). Ver la sección "Sin
+# dominio" al final de este archivo antes de cambiar nada de `proxy`.
+service: cesar-travel
+image: juancarlosguti/cesar-travel
+
+servers:
+  web:
+    - 159.195.235.225
+
+# El acceso por root está deshabilitado en el servidor.
+ssh:
+  user: deploy
+
+proxy:
+  # NO hay `host:`. Un servicio sin host queda como destino por omisión de
+  # kamal-proxy: atiende cualquier petición cuyo Host no coincida con ningún
+  # otro servicio registrado, incluida la que llega a la IP pelada. Es
+  # exactamente lo que se quiere mientras no haya dominio.
+  #
+  # Efecto lateral que conviene saber: también atiende cualquier nombre que
+  # apunte a esta IP y no esté declarado en otro servicio. Hoy eso incluye
+  # `smoke.crearcodecesar.com`, que quedó de una prueba vieja. No es un
+  # problema de seguridad, pero es una sorpresa: conviene borrar ese registro.
+  #
+  # Sin nombre no hay certificado: Let's Encrypt no emite para una dirección
+  # IP. Por eso ssl va en false y el sitio se sirve por HTTP.
+  ssl: false
+  # OBLIGATORIO cuando ssl es false: el valor por omisión de forward_headers
+  # pasa a `true`, y entonces kamal-proxy conserva el X-Forwarded-For que
+  # mande el cliente — cualquiera podría falsear su IP.
+  forward_headers: false
+  app_port: 3000
+  healthcheck:
+    # Endpoint propio y liviano (backend/src/comun/salud.controller.ts).
+    # NO usar /api/municipios, que es lo que apuntaba render.yaml: devuelve los
+    # 1.122 municipios del país con su departamento en cada respuesta, y esto
+    # se consulta cada pocos segundos.
+    path: /api/salud
+    interval: 5
+    timeout: 10
+
+# Primer arranque: TypeORM crea el esquema con `synchronize`, y después el
+# SeedService carga la divipola completa más el catálogo de demostración. Es
+# bastante más que arrancar un proceso. Tras el primer despliegue, leer el
+# tiempo real del log y dejar esto en unas tres veces eso.
+deploy_timeout: 300
+
+registry:
+  server: ghcr.io
+  username: juancarlosguti
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+  context: .
+  dockerfile: Dockerfile
+  cache:
+    type: registry
+    options: mode=max
+    image: juancarlosguti/cesar-travel-build-cache
+
+env:
+  clear:
+    # El Dockerfile ya lo declara; se repite aquí porque es la variable de la
+    # que dependen media docena de comportamientos y conviene verla al lado de
+    # las demás.
+    NODE_ENV: production
+    PORT: "3000"
+    # LA LÍNEA QUE HACE FALTA PARA QUE ESTO ARRANQUE. database.module.ts tenía
+    # `ssl: { rejectUnauthorized: false }` fijo en cuanto existiera
+    # DATABASE_URL, porque estaba escrito para Neon. El Postgres de este
+    # servidor NO tiene TLS: `pg` pide SSLRequest, el servidor responde que no,
+    # y la conexión muere con "The server does not support SSL connections".
+    # No es un riesgo: la conexión no sale de la red interna de Docker.
+    DATABASE_SSL: "false"
+    # Vida del JWT. El código cae a '8h' si falta; se declara para que el valor
+    # de producción se lea en un solo sitio.
+    JWT_EXPIRACION: 8h
+    # CORS_ORIGENES se deja SIN definir a propósito: main.ts solo activa CORS
+    # si existe, y aquí el navegador y la API son el mismo origen. Definirla
+    # abriría un agujero sin ganar nada.
+
+  secret:
+    # postgresql://cesartravel:...@postgres:5432/cesartravel
+    - DATABASE_URL
+    # Firma de los JWT. Cambiarlo invalida las sesiones vivas.
+    - JWT_SECRET
+    # Contraseña real del admin que crea el seed en el primer arranque. Si no
+    # está definida, el seed genera una al azar y la escribe en el log — que es
+    # justo lo que no queremos en un servidor compartido.
+    - SEED_ADMIN_PASSWORD
+
+# ---------------------------------------------------------------------------
+# Sin dominio: qué implica hoy y qué cambiar el día que haya uno
+# ---------------------------------------------------------------------------
+#
+# Lo que NO se rompe, comprobado en el código: el login. cesar-travel no usa
+# cookies — el JWT vive en localStorage y viaja como Bearer en el interceptor
+# (frontend/src/app/nucleo/sesion.ts). localStorage funciona igual sobre HTTP.
+#
+# Lo que SÍ se rompe, y es lo único: el botón "Compartir" de la ficha de un
+# alojamiento (frontend/src/app/paginas/detalle/detalle.ts). Usa
+# `navigator.share` y, si no existe, `navigator.clipboard`. Las dos APIs solo
+# existen en contexto seguro, así que sobre HTTP el botón no hace nada — y
+# falla en silencio por el `?.`. Se arregla solo el día que haya nombre.
+#
+# El día que haya dominio, son tres líneas:
+#   proxy:
+#     ssl: true
+#     forward_headers: false   # redundante con ssl:true, se deja por simetría
+#     host: elnombre.com       # o `hosts:` con la lista
+# Y un registro A hacia 159.195.235.225. El certificado se emite solo.
