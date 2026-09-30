@@ -8,7 +8,11 @@
   <meta name="description"
     content="Alojamientos con el sol del Cesar y el mar de La Guajira: casas, apartamentos, cabañas y fincas en Riohacha, Palomino, Cabo de la Vela, Valledupar, Pueblo Bello y más.">
   <meta name="theme-color" content="#16283f">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- El árbol de la marca (antes era el ícono por defecto de Angular). SVG para los
+       navegadores que lo soportan; el .ico (16/32/48) para el resto. -->
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <!-- Poppins con los pesos que de verdad usan los estilos (400 a 700): antes se pedía
        solo el 400 y el navegador inventaba las negritas. Con <link> y preconnect, y no
        con @import en el CSS, la descarga empieza sin esperar a la hoja de estilos. -->

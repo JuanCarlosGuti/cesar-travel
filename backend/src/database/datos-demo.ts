@@ -5,9 +5,9 @@
  * Colombia (DIVIPOLA del DANE, en datos/divipola.json) más los destinos turísticos de
  * abajo; este archivo solo define las propiedades de ejemplo con las que arranca la app.
  *
- * Las URLs de imagen son externas y verificadas; las de a0.muscache.com se pudren cuando
- * el anuncio original desaparece (ya pasó una vez), así que si alguna deja de cargar se
- * reemplaza por una de Pexels. Las imágenes que suben los usuarios no dependen de esto:
+ * Las fotos son de Pexels, con licencia libre. No usar fotos de anuncios reales (Airbnb,
+ * Booking…): las de antes lo eran, y además de pudrirse cuando el anuncio desaparece,
+ * tienen derechos de autor. Las imágenes que suben los usuarios no dependen de esto:
  * viajan en la base (ver Imagen).
  */
 
@@ -31,30 +31,34 @@ export const DESTINOS_TURISTICOS = [
   },
 ];
 
+/**
+ * Fotos de Pexels (licencia libre: uso comercial permitido y sin atribución
+ * obligatoria). Reemplazaron a las de anuncios de Airbnb, que tenían derechos de autor.
+ */
+function pexels(id: number): string {
+  return `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=1200`;
+}
+
 export const CATEGORIAS = [
   {
     titulo: 'Apartamentos',
     descripcion: 'Apartamentos',
-    imagenUrl:
-      'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    imagenUrl: pexels(8660084),
   },
   {
     titulo: 'Casas',
     descripcion: 'Casas',
-    imagenUrl:
-      'https://images.pexels.com/photos/1370704/pexels-photo-1370704.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    imagenUrl: pexels(1292469),
   },
   {
     titulo: 'Cabañas',
     descripcion: 'Cabañas',
-    imagenUrl:
-      'https://images.pexels.com/photos/128303/pexels-photo-128303.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    imagenUrl: pexels(2598683),
   },
   {
     titulo: 'Fincas',
     descripcion: 'Fincas',
-    imagenUrl:
-      'https://images.pexels.com/photos/2225442/pexels-photo-2225442.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    imagenUrl: pexels(4212054),
   },
 ];
 
@@ -70,70 +74,6 @@ export const CARACTERISTICAS = [
   { nombre: 'Detector de humo', icono: 'detector' },
   { nombre: 'Aire acondicionado', icono: 'aire' },
 ];
-
-/** 8 juegos de 5 fotos, asignados cíclicamente a las propiedades. */
-const GALERIAS: string[][] = [
-  [
-    'https://a0.muscache.com/im/pictures/7c788516-9a54-41ca-99a1-d9006719677e.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/d29ba3bb-17e6-47fc-834d-f6436d8c5e87.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/8c59ea81-54b5-401e-ac86-e7a9c15483c6.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/85b9a885-aa32-49f2-a28f-77850171c276.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/a08c77e2-401e-470c-ab07-49c96cf3a44a.jpg?im_w=1200',
-  ],
-  [
-    'https://a0.muscache.com/im/pictures/7de34810-5412-41f5-978c-bb100ec58d11.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-33186477/original/ac13d934-a49c-4653-8833-be8e19ab7180.jpeg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/29a51b1b-6a8e-4788-984e-ad7a756cc8c8.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/ba694acb-41ba-4064-bc48-b3ef76791615.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-33186477/original/6a74fccd-af3e-4379-b1a4-69839f912c41.jpeg?im_w=1200',
-  ],
-  [
-    'https://a0.muscache.com/im/pictures/miso/Hosting-751447725472870615/original/deb29194-49cc-4164-91dc-d53d7dec2326.jpeg?im_w=960',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-751447725472870615/original/6fe2390e-e1a9-4403-8316-7308d49f9ad7.jpeg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-751447725472870615/original/b8c7cf19-f4bf-42c5-9e15-943b6d669bcc.jpeg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-751447725472870615/original/e9129155-6475-4e7f-bade-37d6f8b8cf4e.jpeg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-751447725472870615/original/687791b0-700e-4ec5-b117-1a13147dcf24.jpeg?im_w=1200',
-  ],
-  [
-    'https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/2089698/pexels-photo-2089698.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-751447725472870615/original/e9a1c57a-4881-4380-acc1-b4a9ac3b6060.jpeg?im_w=1200',
-  ],
-  [
-    'https://a0.muscache.com/im/pictures/miso/Hosting-750539402664925220/original/cb42a45b-4a28-4a7e-91c6-dcd188942fe4.jpeg?im_w=960',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-750539402664925220/original/1541ad38-9c53-431e-833a-dc4d125df7c3.jpeg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-750539402664925220/original/2252d65a-8eaa-4bca-a473-7edd7ff14878.jpeg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-750539402664925220/original/2554beab-8f75-4e2b-8b28-8be338f193bf.jpeg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-750539402664925220/original/4d77cf01-007f-41e7-9cf2-30bb4881c1d9.jpeg?im_w=1200',
-  ],
-  [
-    'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/358636/pexels-photo-358636.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-  ],
-  [
-    'https://a0.muscache.com/im/pictures/1694460b-0d5c-4ed5-92fb-a16fec73e261.jpg?im_w=960',
-    'https://a0.muscache.com/im/pictures/94e85af9-6f3c-425b-8790-b73ce68c5962.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/bd195e77-08cc-4a35-ad37-bfa2fee77368.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/7ecac6e8-d773-4a7c-a3cf-1024cf0dc47d.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/28a554a1-c315-45f7-a22f-d41e88ea9c3c.jpg?im_w=1200',
-  ],
-  [
-    'https://a0.muscache.com/im/pictures/miso/Hosting-38129047/original/894bbb3b-7286-4131-9a7b-edd3c2971723.jpeg?im_w=960',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-38129047/original/e029f158-93d1-4e6b-bd51-b284a77f7d49.jpeg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/miso/Hosting-38129047/original/931fc299-5e96-4b72-9166-eee0ea8882b2.png?im_w=1200',
-    'https://a0.muscache.com/im/pictures/eed4cb33-2592-4ae5-812a-b5c8d9fb67dd.jpg?im_w=1200',
-    'https://a0.muscache.com/im/pictures/068c7bfd-e1c2-41f4-bb62-87fd067c257a.jpg?im_w=1200',
-  ],
-];
-
-export function galeriaDe(indice: number): string[] {
-  return GALERIAS[indice % GALERIAS.length];
-}
 
 /** Servicios típicos por categoría (misma lógica que el catálogo original). */
 const SERVICIOS: Record<string, string[]> = {
@@ -165,12 +105,15 @@ export interface PropiedadDemo {
   /** Nombre del municipio o destino; el seed lo resuelve dentro de su departamento. */
   municipio: string;
   departamento: string;
+  /** Foto del alojamiento (se empareja por título, no por posición en la lista). */
+  foto: string;
 }
 
 export const PROPIEDADES: PropiedadDemo[] = [
   // La Guajira ---------------------------------------------------------------
   {
     titulo: 'Apartamento con vista al mar en el Malecón',
+    foto: pexels(12053482),
     descripcion:
       'Apartamento fresco con balcón sobre el mar Caribe, a pasos del Malecón de Riohacha y del muelle turístico. Ideal como base para conocer el Santuario de los Flamencos y el Cabo de la Vela.',
     direccion: 'Malecón, Riohacha',
@@ -182,6 +125,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa fresca a cuadras de la playa',
+    foto: pexels(7562736),
     descripcion:
       'Casa amplia de un piso con patio sombreado y hamacas, a pocas cuadras de la playa de Riohacha y del mercado nuevo. Perfecta para familias.',
     direccion: 'Barrio El Centro, Riohacha',
@@ -193,6 +137,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña ecológica en la vía a Camarones',
+    foto: pexels(10236126),
     descripcion:
       'Cabaña rodeada de trupillos en la vía al Santuario de Fauna y Flora Los Flamencos. Amaneceres con flamencos rosados a 10 minutos.',
     direccion: 'Vía a Camarones, Riohacha',
@@ -204,6 +149,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña frente al mar en Palomino',
+    foto: pexels(32830121),
     descripcion:
       'Cabaña de madera y palma a pasos de la playa de Palomino, donde la Sierra Nevada se encuentra con el Caribe. Atardeceres inolvidables desde la hamaca.',
     direccion: 'Playa de Palomino',
@@ -215,6 +161,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa entre el río y el mar',
+    foto: pexels(32643806),
     descripcion:
       'Casa tropical a mitad de camino entre el río Palomino y la playa — puedes hacer tubing en el río por la mañana y ver el atardecer en el mar.',
     direccion: 'Km 1 vía al río, Palomino',
@@ -226,6 +173,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa con jardín tropical y hamacas',
+    foto: pexels(18556916),
     descripcion:
       'Casa estilo hostal con jardín lleno de palmas, zona de hamacas y cocina abierta. El plan perfecto para desconectarse en Palomino.',
     direccion: 'Calle principal, Palomino',
@@ -237,6 +185,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Ranchería wayuu con vista al mar',
+    foto: pexels(13209625),
     descripcion:
       'Alojamiento tradicional wayuu con chinchorros y comida típica, frente al mar turquesa del Cabo de la Vela. Una experiencia auténtica de la Alta Guajira.',
     direccion: 'Cabo de la Vela',
@@ -248,6 +197,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña frente al Pilón de Azúcar',
+    foto: pexels(2106191),
     descripcion:
       'Cabaña sencilla con vista directa al Pilón de Azúcar y al mar. Kitesurf, playa ojo de agua y cielos estrellados sin contaminación lumínica.',
     direccion: 'Vía al Pilón, Cabo de la Vela',
@@ -259,6 +209,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa de sal frente a las salinas',
+    foto: pexels(18395588),
     descripcion:
       'Casa fresca frente a las salinas de Manaure, con sus montañas de sal blanca y charcas rosadas. Un paisaje único en Colombia.',
     direccion: 'Frente a las salinas, Manaure',
@@ -270,6 +221,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña wayuu cerca a las charcas rosadas',
+    foto: pexels(16041157),
     descripcion:
       'Cabaña tradicional con chinchorros, atendida por una familia wayuu, a minutos de las charcas rosadas de las salinas de Manaure.',
     direccion: 'Vereda Shiruria, Manaure',
@@ -281,6 +233,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa del desierto, base para Punta Gallinas',
+    foto: pexels(3660322),
     descripcion:
       'Casa de material en el casco urbano de Uribia, la capital indígena de Colombia — el punto de partida ideal para expediciones a Punta Gallinas y Bahía Hondita.',
     direccion: 'Centro, Uribia',
@@ -292,6 +245,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Ranchería tradicional en la Alta Guajira',
+    foto: pexels(13837427),
     descripcion:
       'Ranchería con enramada y chinchorros en pleno desierto guajiro. Noches de historias wayuu alrededor del fogón.',
     direccion: 'Vía a Punta Gallinas, Uribia',
@@ -303,6 +257,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa de playa en Dibulla',
+    foto: pexels(14024993),
     descripcion:
       'Casa frente al mar en Dibulla, con vista a la Sierra Nevada nevada al amanecer. Playas solas, pescado fresco y tranquilidad total.',
     direccion: 'Playa de Dibulla',
@@ -314,6 +269,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Finca entre el mar y la Sierra Nevada',
+    foto: pexels(32643805),
     descripcion:
       'Finca productiva con frutales tropicales entre la playa y las estribaciones de la Sierra Nevada de Santa Marta. Río propio y cacao de la región.',
     direccion: 'Vereda Mingueo, Dibulla',
@@ -326,6 +282,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   // Cesar --------------------------------------------------------------------
   {
     titulo: 'Apartamento moderno cerca a la Plaza Alfonso López',
+    foto: pexels(13004316),
     descripcion:
       'Apartamento nuevo a cuadras de la Plaza Alfonso López, el corazón del vallenato. A pasos de restaurantes, la catedral y la casa de los Maestre.',
     direccion: 'Centro, Valledupar',
@@ -337,6 +294,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa vallenata cerca al río Guatapurí',
+    foto: pexels(12785285),
     descripcion:
       'Casa amplia de un piso, típica del Valle de Upar, a pocas cuadras del balneario Hurtado y la sirena del río Guatapurí. Patio con palo de mango.',
     direccion: 'Barrio Novalito, Valledupar',
@@ -348,6 +306,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Apartamento con piscina en el norte',
+    foto: pexels(12437961),
     descripcion:
       'Apartamento en conjunto cerrado con piscina y gimnasio, en la zona norte de Valledupar. Aire acondicionado en todas las habitaciones.',
     direccion: 'Sabanas del Valle, Valledupar',
@@ -359,6 +318,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Finca ganadera con jagüey natural',
+    foto: pexels(14766316),
     descripcion:
       'Finca tradicional del Cesar con potreros, arboleda nativa y un jagüey acondicionado como piscina natural. Cabalgatas y ordeño al amanecer.',
     direccion: 'Vía a Codazzi, Valledupar',
@@ -370,6 +330,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa del barrio Cañaguate',
+    foto: pexels(13767145),
     descripcion:
       'Casa familiar en el barrio que le da nombre al árbol insignia de la ciudad — en enero florece amarillo entero. Cerca al parque de la Leyenda Vallenata.',
     direccion: 'Barrio Cañaguate, Valledupar',
@@ -381,6 +342,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña de montaña en Pueblo Bello',
+    foto: pexels(8093239),
     descripcion:
       'Cabaña con chimenea en el clima frío de Pueblo Bello, la puerta de entrada a la Sierra Nevada. Neblina, café y silencio.',
     direccion: 'Vía a Nabusímake, Pueblo Bello',
@@ -392,6 +354,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Finca cafetera con vista a la Sierra',
+    foto: pexels(35816500),
     descripcion:
       'Finca cafetera en las faldas de la Sierra Nevada, con recorridos por los cultivos y café tostado en casa. Comunidad arhuaca vecina.',
     direccion: 'Vereda Las Mercedes, Pueblo Bello',
@@ -403,6 +366,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa campestre a la entrada de la Sierra',
+    foto: pexels(39530048),
     descripcion:
       'Casa campestre con jardín de heliconias y vista a las montañas. El punto de partida para caminatas a Nabusímake, capital espiritual arhuaca.',
     direccion: 'Casco urbano, Pueblo Bello',
@@ -414,6 +378,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa tradicional en La Paz',
+    foto: pexels(15020185),
     descripcion:
       'Casa de pueblo con techos altos y mecedoras en el corredor, en La Paz — tierra de acordeoneros, a 20 minutos de Valledupar.',
     direccion: 'Centro, La Paz',
@@ -425,6 +390,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Finca con frutales en San Diego',
+    foto: pexels(14541787),
     descripcion:
       'Finca con cultivos de mango, guanábana y cítricos en el valle de San Diego. Piscina, kiosco con hamacas y noches de cielo despejado.',
     direccion: 'Vía Media Luna, San Diego',
@@ -436,6 +402,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa de descanso en San Diego',
+    foto: pexels(12865680),
     descripcion:
       'Casa tranquila con patio grande y árboles frutales en el pueblo de San Diego, famoso por sus parrandas vallenatas de diciembre.',
     direccion: 'Centro, San Diego',
@@ -447,6 +414,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña con clima de montaña',
+    foto: pexels(13834229),
     descripcion:
       'Cabaña en Manaure Balcón del Cesar, el pueblo con el mejor clima del departamento — 1.300 msnm de frescura en plena serranía del Perijá.',
     direccion: 'Vía al mirador, Manaure Balcón del Cesar',
@@ -458,6 +426,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa mirador del Balcón del Cesar',
+    foto: pexels(16936166),
     descripcion:
       'Casa con terraza-mirador sobre el valle del Cesar. Al amanecer se ve el valle entero y al fondo la Sierra Nevada.',
     direccion: 'Alto de la Virgen, Manaure Balcón del Cesar',
@@ -469,6 +438,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa frente a la Ciénaga de Zapatosa',
+    foto: pexels(36860532),
     descripcion:
       'Casa a la orilla de la ciénaga más grande de Colombia. Paseos en canoa, pesca artesanal y atardeceres sobre el agua en Chimichagua.',
     direccion: 'Malecón, Chimichagua',

@@ -16,7 +16,6 @@ import {
   DESTINOS_TURISTICOS,
   NORMAS_POR_DEFECTO,
   PROPIEDADES,
-  galeriaDe,
   serviciosDe,
 } from './datos-demo';
 import divipola from './datos/divipola.json';
@@ -158,7 +157,7 @@ export class SeedService implements OnApplicationBootstrap {
     };
 
     const propiedades: Propiedad[] = [];
-    for (const [indice, datos] of PROPIEDADES.entries()) {
+    for (const datos of PROPIEDADES) {
       // El nombre solo es único dentro de su departamento (hay varios "San Diego" o
       // "Manaure" en el país), por eso la búsqueda usa los dos campos.
       const municipio = await this.municipios.findOne({
@@ -185,9 +184,9 @@ export class SeedService implements OnApplicationBootstrap {
         municipio,
         caracteristicas: serviciosDe(datos.categoria).map(buscarCaracteristica),
       });
-      propiedad.imagenes = galeriaDe(indice).map((url) =>
-        Object.assign(new Imagen(), { titulo: datos.titulo, urlExterna: url }),
-      );
+      propiedad.imagenes = [
+        Object.assign(new Imagen(), { titulo: datos.titulo, urlExterna: datos.foto }),
+      ];
       propiedades.push(propiedad);
     }
 

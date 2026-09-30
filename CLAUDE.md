@@ -63,7 +63,12 @@ Paleta Cesar/Guajira: Cañaguate `#f0a600` (dorado, primario), Caribe `#0e7b78` 
 Guajira `#c1502e` (terracota, acentos), Noche `#16283f` (navbar/footer/texto), Arena
 `#fbf2de` (fondo), Sierra `#2e6b4f`. Tipografía: Poppins para interfaz, stack serif
 (`$fontSerif`) para el nombre de la marca y los títulos. Logo: árbol de cañaguate
-(`comun/canaguate-mark`).
+(`comun/canaguate-mark`); los favicons (`frontend/public/favicon.svg`, `.ico` y
+`apple-touch-icon.png`) son ese mismo árbol: si cambia el logo, se regeneran.
+
+Fotos del catálogo de demostración: **solo Pexels o propias**, nunca de anuncios reales
+(las de Airbnb se quitaron por derechos de autor). Cada alojamiento del seed lleva su
+campo `foto`; cambiar el seed no toca producción, que necesita su propio UPDATE.
 
 ## Ubicaciones
 
