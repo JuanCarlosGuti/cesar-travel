@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -54,14 +49,6 @@ export class AuthService {
       throw new UnauthorizedException('Email o contraseña incorrectos');
     }
     return this.aSesion(usuario);
-  }
-
-  async buscarPorId(id: number): Promise<UsuarioResponse> {
-    const usuario = await this.usuarios.findOneBy({ id });
-    if (!usuario) {
-      throw new NotFoundException(`No existe el usuario ${id}`);
-    }
-    return this.aVistaPublica(usuario);
   }
 
   private aSesion(usuario: Usuario): SesionResponse {

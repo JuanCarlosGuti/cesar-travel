@@ -1,11 +1,11 @@
 import { ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { Repository } from 'typeorm';
 import { AuthModule } from '../src/auth/auth.module';
+import { Usuario } from '../src/auth/entidades/usuario.entity';
 import { CatalogoModule } from '../src/catalogo/catalogo.module';
 import { Caracteristica } from '../src/catalogo/entidades/caracteristica.entity';
 import { Categoria } from '../src/catalogo/entidades/categoria.entity';
@@ -15,19 +15,24 @@ import { ChatModule } from '../src/chat/chat.module';
 import { entidades } from '../src/database/entidades';
 import { PropiedadesModule } from '../src/propiedades/propiedades.module';
 import { ResenasModule } from '../src/resenas/resenas.module';
+import { Reserva } from '../src/reservas/entidades/reserva.entity';
 import { ReservasModule } from '../src/reservas/reservas.module';
 
 /**
  * Verifica las reglas de negocio contra la API real con una base SQLite en memoria.
  * Son las reglas que más caro cuesta romper sin darse cuenta: solapamiento de reservas,
- * quién puede reseñar y quién puede ver la identidad de los huéspedes.
+ * quién puede reseñar, quién puede ver la identidad de los huéspedes y los límites que
+ * impiden bloquear calendarios o fabricar reseñas.
  */
 describe('Reglas de negocio (e2e)', () => {
   let app: App;
   let servidor: request.Agent;
+  let tokenAnfitrion: string;
   let tokenHuesped: string;
   let tokenOtro: string;
   let propiedadId: number;
+  let reservas: Repository<Reserva>;
+  let usuarios: Repository<Usuario>;
 
   const fecha = (diasDesdeHoy: number): string => {
     const dia = new Date();
@@ -53,11 +58,7 @@ describe('Reglas de negocio (e2e)', () => {
         ResenasModule,
         ChatModule,
       ],
-    })
-      // ServeStaticModule buscaría el build de Angular, que no existe en las pruebas.
-      .overrideModule(ServeStaticModule)
-      .useModule(class ModuloVacio {})
-      .compile();
+    }).compile();
 
     const nest = modulo.createNestApplication();
     nest.useGlobalPipes(
@@ -85,8 +86,11 @@ describe('Reglas de negocio (e2e)', () => {
       email: 'caro@test.co',
       password: 'password123',
     });
+    tokenAnfitrion = anfitrion.body.token;
     tokenHuesped = huesped.body.token;
     tokenOtro = otro.body.token;
+    reservas = nest.get<Repository<Reserva>>(getRepositoryToken(Reserva));
+    usuarios = nest.get<Repository<Usuario>>(getRepositoryToken(Usuario));
 
     // Catálogo mínimo, creado a mano: el seed de demostración no participa de las pruebas.
     const departamentos = nest.get<Repository<Departamento>>(
@@ -110,7 +114,7 @@ describe('Reglas de negocio (e2e)', () => {
 
     const nuevaPropiedad = await servidor
       .post('/api/propiedades')
-      .set('Authorization', `Bearer ${anfitrion.body.token}`)
+      .set('Authorization', `Bearer ${tokenAnfitrion}`)
       .send({
         titulo: 'Casa de prueba en Palomino',
         descripcion: 'Frente al mar',
@@ -168,5 +172,108 @@ describe('Reglas de negocio (e2e)', () => {
 
     expect(respuesta.body.length).toBeGreaterThan(0);
     expect(JSON.stringify(respuesta.body)).not.toContain('Beto');
+  });
+/**
+   * Reservas que la API ya no deja crear (fechas pasadas): se insertan directo en la
+   * base para probar lo que pasa con estadías empezadas o terminadas.
+   */
+  async function reservaDirecta(email: string, entrada: string, salida: string) {
+    return reservas.save(
+      reservas.create({
+        propiedad: { id: propiedadId },
+        huesped: await usuarios.findOneByOrFail({ email }),
+        entrada,
+        salida,
+      }),
+    );
+  }
+
+  it('rechaza reservas con entrada en el pasado', async () => {
+    await servidor
+      .post('/api/reservas')
+      .set('Authorization', `Bearer ${tokenHuesped}`)
+      .send({ propiedadId, entrada: fecha(-3), salida: fecha(-1) })
+      .expect(400);
+  });
+
+  it('rechaza estadías de más de 30 noches', async () => {
+    await servidor
+      .post('/api/reservas')
+      .set('Authorization', `Bearer ${tokenHuesped}`)
+      .send({ propiedadId, entrada: fecha(100), salida: fecha(131) })
+      .expect(400);
+  });
+
+  it('rechaza reservas con más de un año de anticipación', async () => {
+    await servidor
+      .post('/api/reservas')
+      .set('Authorization', `Bearer ${tokenHuesped}`)
+      .send({ propiedadId, entrada: fecha(400), salida: fecha(402) })
+      .expect(400);
+  });
+
+  it('el dueño no puede reservar su propia propiedad', async () => {
+    await servidor
+      .post('/api/reservas')
+      .set('Authorization', `Bearer ${tokenAnfitrion}`)
+      .send({ propiedadId, entrada: fecha(60), salida: fecha(62) })
+      .expect(403);
+  });
+
+  it('limita a dos las reservas por venir de un huésped en la misma propiedad', async () => {
+    // Beto ya tiene una (días 10 a 15).
+    await servidor
+      .post('/api/reservas')
+      .set('Authorization', `Bearer ${tokenHuesped}`)
+      .send({ propiedadId, entrada: fecha(40), salida: fecha(42) })
+      .expect(201);
+    await servidor
+      .post('/api/reservas')
+      .set('Authorization', `Bearer ${tokenHuesped}`)
+      .send({ propiedadId, entrada: fecha(50), salida: fecha(52) })
+      .expect(409);
+  });
+
+  it('no deja cancelar una estadía que ya empezó', async () => {
+    const empezada = await reservaDirecta('beto@test.co', fecha(-2), fecha(1));
+    await servidor
+      .delete(`/api/reservas/${empezada.id}`)
+      .set('Authorization', `Bearer ${tokenHuesped}`)
+      .expect(409);
+  });
+
+  it('deja reseñar a quien terminó su estadía, una sola vez', async () => {
+    await reservaDirecta('caro@test.co', fecha(-6), fecha(-2));
+    await servidor
+      .post('/api/resenas')
+      .set('Authorization', `Bearer ${tokenOtro}`)
+      .send({ propiedadId, puntaje: 5, comentario: 'Excelente' })
+      .expect(201);
+    await servidor
+      .post('/api/resenas')
+      .set('Authorization', `Bearer ${tokenOtro}`)
+      .send({ propiedadId, puntaje: 4, comentario: 'Otra vez' })
+      .expect(409);
+  });
+
+  it('no expone datos de otros usuarios por id', async () => {
+    await servidor
+      .get('/api/auth/usuarios/1')
+      .set('Authorization', `Bearer ${tokenOtro}`)
+      .expect(404);
+  });
+
+  // La última: agota el cupo de intentos de login desde esta IP.
+  it('limita los intentos de login', async () => {
+    for (let intento = 0; intento < 10; intento++) {
+      await servidor
+        .post('/api/auth/login')
+        .send({ email: 'ana@test.co', password: 'incorrecta' })
+        .expect(401);
+    }
+    await servidor
+      .post('/api/auth/login')
+      .send({ email: 'ana@test.co', password: 'incorrecta' })
+      .expect(429);
   });
 });

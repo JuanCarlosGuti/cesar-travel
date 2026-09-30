@@ -26,18 +26,9 @@ function mensajeDeError(respuesta: HttpErrorResponse): string {
     return mensaje;
   }
   if (respuesta?.status === 0) {
-    return 'No pudimos conectar con el servidor. Revisá tu conexión e intentá de nuevo.';
+    return 'No pudimos conectar con el servidor. Revisa tu conexión e intenta de nuevo.';
   }
-  return 'Ocurrió un error inesperado. Intentá de nuevo.';
-}
-
-/** Celular colombiano: 10 dígitos que empiezan en 3. Vacío es válido (es opcional). */
-function celularOpcional(control: AbstractControl): ValidationErrors | null {
-  const valor = (control.value ?? '').trim();
-  if (valor === '') {
-    return null;
-  }
-  return /^3\d{9}$/.test(valor) ? null : { celular: true };
+  return 'Ocurrió un error inesperado. Intenta de nuevo.';
 }
 
 /** Validador a nivel de grupo: las dos contraseñas tienen que coincidir. */
@@ -71,7 +62,6 @@ export class RegistroComponent {
       nombre: ['', [Validators.required, Validators.minLength(2)]],
       apellido: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      telefono: ['', [celularOpcional]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmacion: ['', [Validators.required]],
     },
@@ -90,10 +80,6 @@ export class RegistroComponent {
     return this.formulario.controls.email;
   }
 
-  get telefono() {
-    return this.formulario.controls.telefono;
-  }
-
   get password() {
     return this.formulario.controls.password;
   }
@@ -110,16 +96,16 @@ export class RegistroComponent {
 
     this.enviando.set(true);
     this.error.set(null);
-    const { nombre, apellido, email, telefono, password } = this.formulario.getRawValue();
+    const { nombre, apellido, email, password } = this.formulario.getRawValue();
 
     this.api
       .registrar({
         nombre: nombre.trim(),
         apellido: apellido.trim(),
         email: email.trim(),
+        // Sin teléfono: la app nunca lo usaba, y pedir un dato que no se usa va contra la
+        // minimización de datos personales (Ley 1581).
         password,
-        // El campo es opcional: si va vacío no se manda la clave.
-        ...(telefono.trim() ? { telefono: telefono.trim() } : {}),
       })
       .subscribe({
         next: (sesion) => {

@@ -32,7 +32,7 @@ function mensajeDeError(respuesta: HttpErrorResponse): string {
   if (typeof mensaje === 'string' && mensaje.trim() !== '') {
     return mensaje;
   }
-  return 'Ocurrió un error inesperado. Intentá de nuevo.';
+  return 'Ocurrió un error inesperado. Intenta de nuevo.';
 }
 
 /**
@@ -128,6 +128,11 @@ export class MisReservasComponent {
 
   protected fecha(valor: string): string {
     return formatearEnEspanol(valor);
+  }
+
+  /** Se cancela solo lo que todavía no empezó. */
+  protected puedeCancelar(reserva: Reserva): boolean {
+    return reserva.entrada.slice(0, 10) > hoyIso();
   }
 
   /** Solo se puede reseñar una estadía terminada y una única vez por propiedad. */

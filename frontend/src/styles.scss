@@ -2,9 +2,6 @@
 // Los tokens se cargan primero porque `@use` debe preceder a cualquier otra regla.
 @use './styles/tokens' as *;
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
-
 // ---------------------------------------------------------------------------
 // Reset mínimo
 // ---------------------------------------------------------------------------

@@ -38,7 +38,7 @@ export class ChatService {
     }
     // El dueño sale de la propiedad, nunca de lo que mande el cliente.
     if (propiedad.duenio.id === huesped.id) {
-      throw new BadRequestException('No podés abrir un chat con vos mismo');
+      throw new BadRequestException('No puedes abrir un chat contigo mismo');
     }
 
     const existente = await this.conversaciones.findOne({
@@ -172,7 +172,7 @@ export class ChatService {
     const participa =
       conversacion.huesped.id === usuario.id || conversacion.duenio.id === usuario.id;
     if (!participa) {
-      throw new ForbiddenException('No participás en esta conversación');
+      throw new ForbiddenException('No participas en esta conversación');
     }
     return conversacion;
   }

@@ -31,42 +31,13 @@
   letter-spacing: 0.3px;
 }
 
-.redes {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.redes__item {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  color: $colorFondo;
-  background-color: rgba($colorFondo, 0.08);
-  transition: color 200ms ease, background-color 200ms ease;
-
-  svg {
-    width: 17px;
-    height: 17px;
-  }
-
-  &:hover {
-    color: $Dark;
-    background-color: $colorPpal;
-  }
+.pie__texto a {
+  color: $colorPpal;
+  font-weight: 600;
 }
 
 @include breakpoint-down('small') {
   .pie__texto {
     font-size: 0.75rem;
-  }
-
-  .redes {
-    gap: 8px;
   }
 }

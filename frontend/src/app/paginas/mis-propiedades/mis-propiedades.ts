@@ -17,7 +17,7 @@ function mensajeDeError(respuesta: HttpErrorResponse): string {
   if (typeof mensaje === 'string' && mensaje.trim() !== '') {
     return mensaje;
   }
-  return 'Ocurrió un error inesperado. Intentá de nuevo.';
+  return 'Ocurrió un error inesperado. Intenta de nuevo.';
 }
 
 @Component({

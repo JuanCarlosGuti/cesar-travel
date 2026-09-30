@@ -34,6 +34,10 @@ interface ArchivoElegido {
 }
 
 const TIPOS_ACEPTADOS = ['image/jpeg', 'image/png', 'image/webp'];
+// Los mismos límites que aplica el backend (propiedades.controller.ts): se validan
+// aquí también para avisar en español antes de subir nada.
+const TAMANIO_MAXIMO_BYTES = 8 * 1024 * 1024;
+const MAX_ARCHIVOS_POR_ENVIO = 10;
 
 /** El backend (NestJS) devuelve `message` como string o como array de strings. */
 function mensajeDeError(respuesta: HttpErrorResponse): string {
@@ -45,9 +49,9 @@ function mensajeDeError(respuesta: HttpErrorResponse): string {
     return mensaje;
   }
   if (respuesta?.status === 0) {
-    return 'No pudimos conectar con el servidor. Revisá tu conexión e intentá de nuevo.';
+    return 'No pudimos conectar con el servidor. Revisa tu conexión e intenta de nuevo.';
   }
-  return 'Ocurrió un error inesperado. Intentá de nuevo.';
+  return 'Ocurrió un error inesperado. Intenta de nuevo.';
 }
 
 /** Al menos un servicio tildado (el backend rechaza el array vacío). */
@@ -104,9 +108,9 @@ export class PublicarComponent {
   /** Texto de la opción vacía del select de municipio, según en qué paso esté. */
   protected readonly avisoMunicipio = computed(() => {
     if (this.departamentoId() === null) {
-      return 'Elegí primero un departamento';
+      return 'Elige primero un departamento';
     }
-    return this.cargandoMunicipios() ? 'Cargando municipios…' : 'Elegí un municipio';
+    return this.cargandoMunicipios() ? 'Cargando municipios…' : 'Elige un municipio';
   });
 
   protected readonly formulario = this.fb.group({
@@ -276,9 +280,21 @@ export class PublicarComponent {
 
   protected elegirArchivos(evento: Event): void {
     const input = evento.target as HTMLInputElement;
-    const elegidos = Array.from(input.files ?? []).filter((archivo) =>
+    const validos = Array.from(input.files ?? []).filter((archivo) =>
       TIPOS_ACEPTADOS.includes(archivo.type),
     );
+    const livianos = validos.filter((archivo) => archivo.size <= TAMANIO_MAXIMO_BYTES);
+    const cupo = MAX_ARCHIVOS_POR_ENVIO - this.nuevosArchivos().length;
+    const elegidos = livianos.slice(0, Math.max(cupo, 0));
+
+    const avisos: string[] = [];
+    if (livianos.length < validos.length) {
+      avisos.push('Las fotos de más de 8 MB no se agregaron.');
+    }
+    if (elegidos.length < livianos.length) {
+      avisos.push(`Puedes subir hasta ${MAX_ARCHIVOS_POR_ENVIO} fotos a la vez.`);
+    }
+    this.error.set(avisos.length ? avisos.join(' ') : null);
 
     this.nuevosArchivos.update((lista) => [
       ...lista,
@@ -323,7 +339,7 @@ export class PublicarComponent {
   protected guardar(): void {
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
-      this.error.set('Revisá los campos marcados antes de guardar.');
+      this.error.set('Revisa los campos marcados antes de guardar.');
       return;
     }
 
@@ -388,7 +404,7 @@ export class PublicarComponent {
         this.aviso.set(
           `La propiedad se guardó correctamente, pero no pudimos subir las imágenes (${mensajeDeError(
             respuesta,
-          )}). Podés reintentar desde acá sin volver a cargar los datos.`,
+          )}). Puedes reintentar desde aquí sin volver a cargar los datos.`,
         );
       },
     });

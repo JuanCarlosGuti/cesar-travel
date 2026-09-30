@@ -15,7 +15,7 @@
   <div class="contenedor">
     <header class="seccion-encabezado">
       <h2>Buscar por tipo de alojamiento</h2>
-      <p>Elegí el estilo de viaje y te mostramos lo disponible.</p>
+      <p>Elige el estilo de viaje y te mostramos lo disponible.</p>
     </header>
 
     <div class="grilla-categorias">
@@ -26,7 +26,7 @@
           [queryParams]="{ categoriaId: categoria.id }"
         >
           @if (categoria.imagenUrl; as url) {
-            <img [src]="url" [alt]="categoria.titulo" loading="lazy" />
+            <img [src]="url" [alt]="categoria.titulo" />
           } @else {
             <div class="categoria-vacia" aria-hidden="true"></div>
           }
@@ -41,14 +41,14 @@
   <div class="contenedor">
     <header class="seccion-encabezado">
       <h2>Recomendaciones</h2>
-      <p>Una selección rotativa de lo que ofrecen nuestros anfitriones.</p>
+      <p>Una muestra de los alojamientos publicados.</p>
     </header>
 
     @if (cargando()) {
       <p class="aviso">Cargando alojamientos…</p>
     } @else if (error()) {
       <p class="aviso">
-        No pudimos cargar los alojamientos en este momento. Probá de nuevo en un rato.
+        No pudimos cargar los alojamientos en este momento. Prueba de nuevo en un rato.
       </p>
     } @else if (!total()) {
       <p class="aviso">Todavía no hay alojamientos publicados.</p>

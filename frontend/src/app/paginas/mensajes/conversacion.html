@@ -21,7 +21,7 @@
       <p class="estado">Cargando mensajes…</p>
     } @else if (mensajes().length === 0) {
       <p class="estado">
-        Todavía no hay mensajes. Escribí el primero para romper el hielo.
+        Todavía no hay mensajes. Escribe el primero para romper el hielo.
       </p>
     } @else {
       @for (mensaje of mensajes(); track mensaje.id) {
@@ -39,7 +39,7 @@
     <input
       type="text"
       formControlName="cuerpo"
-      placeholder="Escribí un mensaje…"
+      placeholder="Escribe un mensaje…"
       autocomplete="off"
       aria-label="Mensaje"
     />

@@ -150,7 +150,7 @@ export class ConversacionComponent {
             ? mensaje.join('. ')
             : typeof mensaje === 'string' && mensaje.trim() !== ''
               ? mensaje
-              : 'No pudimos enviar tu mensaje. Intentá de nuevo.',
+              : 'No pudimos enviar tu mensaje. Intenta de nuevo.',
         );
       },
     });

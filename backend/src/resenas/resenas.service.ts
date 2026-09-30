@@ -28,7 +28,7 @@ export class ResenasService {
     // de gente que nunca estuvo y de estadías todavía en curso.
     if (!(await this.reservas.tuvoEstadiaFinalizada(propiedad.id, autor.id))) {
       throw new ForbiddenException(
-        'Solo podés reseñar propiedades donde ya te hospedaste (con la estadía finalizada)',
+        'Solo puedes reseñar propiedades donde ya te hospedaste (con la estadía finalizada)',
       );
     }
 

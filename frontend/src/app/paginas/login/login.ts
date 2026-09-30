@@ -74,7 +74,7 @@ function mensajeDeError(respuesta: HttpErrorResponse): string {
     return mensaje;
   }
   if (respuesta?.status === 0) {
-    return 'No pudimos conectar con el servidor. Revisá tu conexión e intentá de nuevo.';
+    return 'No pudimos conectar con el servidor. Revisa tu conexión e intenta de nuevo.';
   }
-  return 'Ocurrió un error inesperado. Intentá de nuevo.';
+  return 'Ocurrió un error inesperado. Intenta de nuevo.';
 }

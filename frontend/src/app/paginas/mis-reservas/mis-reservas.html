@@ -16,7 +16,7 @@
     </div>
   } @else if (vacio()) {
     <div class="vacio">
-      <h2>Todavía no tenés reservas</h2>
+      <h2>Todavía no tienes reservas</h2>
       <p>Cuando reserves un alojamiento vas a verlo acá, con sus fechas y su check in.</p>
       <a class="boton-ppal" routerLink="/">Buscar alojamientos</a>
     </div>
@@ -62,14 +62,17 @@
             }
 
             <div class="acciones">
-              <button
-                type="button"
-                class="boton-borde"
-                [disabled]="cancelando() === reserva.id"
-                (click)="cancelar(reserva)"
-              >
-                {{ cancelando() === reserva.id ? 'Cancelando…' : 'Cancelar reserva' }}
-              </button>
+              <!-- Una estadía empezada o terminada ya no se cancela (el backend responde 409). -->
+              @if (puedeCancelar(reserva)) {
+                <button
+                  type="button"
+                  class="boton-borde"
+                  [disabled]="cancelando() === reserva.id"
+                  (click)="cancelar(reserva)"
+                >
+                  {{ cancelando() === reserva.id ? 'Cancelando…' : 'Cancelar reserva' }}
+                </button>
+              }
 
               @if (puedeResenar(reserva)) {
                 @if (resenando() === reserva.id) {
@@ -102,7 +105,7 @@
                   formularioResena.controls.puntaje.touched &&
                   formularioResena.controls.puntaje.invalid
                 ) {
-                  <p class="error-campo">Elegí un puntaje de 1 a 5 estrellas.</p>
+                  <p class="error-campo">Elige un puntaje de 1 a 5 estrellas.</p>
                 }
 
                 <label class="campo">
@@ -111,7 +114,7 @@
                     formControlName="comentario"
                     rows="4"
                     maxlength="1000"
-                    placeholder="Contá qué te gustó del lugar, la atención, la ubicación…"
+                    placeholder="Cuenta qué te gustó del lugar, la atención, la ubicación…"
                   ></textarea>
                   <small class="contador">{{ restantes() }} caracteres restantes</small>
                 </label>

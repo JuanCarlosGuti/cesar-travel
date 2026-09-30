@@ -34,11 +34,30 @@ export class SesionService {
       return null;
     }
     try {
-      return JSON.parse(guardada) as Sesion;
+      const sesion = JSON.parse(guardada) as Sesion;
+      // Un token vencido no es una sesión: se descarta al abrir la app en vez de
+      // mostrar "Hola, …" y fallar en la primera acción.
+      if (vencido(sesion.token)) {
+        localStorage.removeItem(CLAVE);
+        return null;
+      }
+      return sesion;
     } catch {
       // Dato corrupto (edición manual, versión vieja): se descarta sin romper la app.
       localStorage.removeItem(CLAVE);
       return null;
     }
   }
+}
+
+/** Lee `exp` del JWT (segundos). Sin `exp` legible se considera vencido. */
+function vencido(token: string): boolean {
+  const carga = token.split('.')[1];
+  if (!carga) {
+    return true;
+  }
+  const { exp } = JSON.parse(atob(carga.replace(/-/g, '+').replace(/_/g, '/'))) as {
+    exp?: number;
+  };
+  return typeof exp !== 'number' || exp * 1000 <= Date.now();
 }

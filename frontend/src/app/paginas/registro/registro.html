@@ -19,11 +19,13 @@
             type="text"
             class="campo__control"
             formControlName="nombre"
+            [attr.aria-invalid]="nombre.touched && nombre.invalid"
+            [attr.aria-describedby]="nombre.touched && nombre.errors ? 'error-nombre' : null"
             autocomplete="given-name"
             placeholder="María"
           />
           @if (nombre.touched && nombre.errors) {
-            <p class="campo__error">
+            <p class="campo__error" id="error-nombre">
               @if (nombre.errors['required']) {
                 El nombre es obligatorio.
               } @else {
@@ -40,11 +42,13 @@
             type="text"
             class="campo__control"
             formControlName="apellido"
+            [attr.aria-invalid]="apellido.touched && apellido.invalid"
+            [attr.aria-describedby]="apellido.touched && apellido.errors ? 'error-apellido' : null"
             autocomplete="family-name"
             placeholder="Ramírez"
           />
           @if (apellido.touched && apellido.errors) {
-            <p class="campo__error">
+            <p class="campo__error" id="error-apellido">
               @if (apellido.errors['required']) {
                 El apellido es obligatorio.
               } @else {
@@ -62,33 +66,19 @@
           type="email"
           class="campo__control"
           formControlName="email"
+          [attr.aria-invalid]="email.touched && email.invalid"
+          [attr.aria-describedby]="email.touched && email.errors ? 'error-email' : null"
           autocomplete="email"
           placeholder="tucorreo@ejemplo.com"
         />
         @if (email.touched && email.errors) {
-          <p class="campo__error">
+          <p class="campo__error" id="error-email">
             @if (email.errors['required']) {
               El correo es obligatorio.
             } @else {
-              Ingresá un correo válido.
+              Ingresa un correo válido.
             }
           </p>
-        }
-      </div>
-
-      <div class="campo">
-        <label class="campo__etiqueta" for="telefono">Celular (opcional)</label>
-        <input
-          id="telefono"
-          type="tel"
-          class="campo__control"
-          formControlName="telefono"
-          autocomplete="tel-national"
-          inputmode="numeric"
-          placeholder="3001234567"
-        />
-        @if (telefono.touched && telefono.errors) {
-          <p class="campo__error">Debe ser un celular de 10 dígitos que empiece por 3.</p>
         }
       </div>
 
@@ -100,11 +90,13 @@
             type="password"
             class="campo__control"
             formControlName="password"
+            [attr.aria-invalid]="password.touched && password.invalid"
+            [attr.aria-describedby]="password.touched && password.errors ? 'error-password' : null"
             autocomplete="new-password"
             placeholder="Mínimo 8 caracteres"
           />
           @if (password.touched && password.errors) {
-            <p class="campo__error">
+            <p class="campo__error" id="error-password">
               @if (password.errors['required']) {
                 La contraseña es obligatoria.
               } @else {
@@ -121,13 +113,15 @@
             type="password"
             class="campo__control"
             formControlName="confirmacion"
+            [attr.aria-invalid]="confirmacion.touched && (confirmacion.invalid || !!formulario.errors?.['noCoinciden'])"
+            [attr.aria-describedby]="confirmacion.touched ? 'error-confirmacion' : null"
             autocomplete="new-password"
-            placeholder="Repetí la contraseña"
+            placeholder="Repite la contraseña"
           />
           @if (confirmacion.touched && confirmacion.errors?.['required']) {
-            <p class="campo__error">Confirmá la contraseña.</p>
+            <p class="campo__error" id="error-confirmacion">Confirma la contraseña.</p>
           } @else if (confirmacion.touched && formulario.errors?.['noCoinciden']) {
-            <p class="campo__error">Las contraseñas no coinciden.</p>
+            <p class="campo__error" id="error-confirmacion">Las contraseñas no coinciden.</p>
           }
         </div>
       </div>
@@ -138,7 +132,7 @@
     </form>
 
     <p class="pie">
-      ¿Ya tenés cuenta?
+      ¿Ya tienes cuenta?
       <a routerLink="/login" class="pie__enlace">Iniciar sesión</a>
     </p>
   </div>

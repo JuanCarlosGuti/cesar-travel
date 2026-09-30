@@ -49,7 +49,7 @@
     </div>
   </header>
 
-  <main class="contenedor pagina">
+  <div class="contenedor pagina">
     <!-- Ubicación ------------------------------------------------------- -->
     <section class="ubicacion">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" class="pin">
@@ -77,7 +77,7 @@
       <section class="galeria" aria-label="Galería de imágenes">
         @if (imagenPrincipal(); as principal) {
           <button type="button" class="galeria__principal" (click)="abrirVisor(0)">
-            <img [src]="principal.url" [alt]="principal.titulo || p.titulo" loading="lazy" />
+            <img [src]="principal.url" [alt]="principal.titulo || p.titulo" fetchpriority="high" />
           </button>
         }
 
@@ -123,7 +123,7 @@
           </button>
         } @else {
           <div class="cta-sesion">
-            <p>Iniciá sesión para escribirle al dueño</p>
+            <p>Inicia sesión para escribirle al dueño</p>
             <a routerLink="/login" class="boton boton--teal">Iniciar sesión</a>
           </div>
         }
@@ -180,7 +180,7 @@
     <!-- Políticas -------------------------------------------------------- -->
     @if (tienePoliticas()) {
       <section class="bloque">
-        <h2>Qué tenés que saber</h2>
+        <h2>Qué debes saber</h2>
         <div class="politicas">
           @if (p.normas) {
             <article>
@@ -276,7 +276,7 @@
         </ul>
       </section>
     }
-  </main>
+  </div>
 
   <!-- Visor a pantalla completa ------------------------------------------ -->
   @if (visor() !== null) {

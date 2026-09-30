@@ -37,12 +37,28 @@ function fechaLarga(iso: string): string {
   return `${d} de ${MESES[m - 1]} de ${a}`;
 }
 
-/** `yyyy-MM-dd` de hoy en hora local (toISOString daría UTC y puede adelantar un día). */
-function hoyIso(): string {
-  const ahora = new Date();
-  const mes = `${ahora.getMonth() + 1}`.padStart(2, '0');
-  const dia = `${ahora.getDate()}`.padStart(2, '0');
-  return `${ahora.getFullYear()}-${mes}-${dia}`;
+/** `yyyy-MM-dd` en hora local (toISOString daría UTC y puede adelantar un día). */
+function aIso(fecha: Date): string {
+  const mes = `${fecha.getMonth() + 1}`.padStart(2, '0');
+  const dia = `${fecha.getDate()}`.padStart(2, '0');
+  return `${fecha.getFullYear()}-${mes}-${dia}`;
+}
+
+function sumarDias(iso: string, dias: number): string {
+  const fecha = new Date(`${iso}T00:00:00`);
+  fecha.setDate(fecha.getDate() + dias);
+  return aIso(fecha);
+}
+
+// Los mismos topes que valida el backend (reservas.service.ts): el calendario no
+// ofrece fechas que después se rechazarían.
+const MAX_ANTICIPACION_DIAS = 365;
+const MAX_NOCHES = 30;
+
+/** El backend (NestJS) manda `message` como texto o como lista de textos. */
+function mensajeDelServidor(err: HttpErrorResponse): string | null {
+  const mensaje = (err.error as { message?: string | string[] } | null)?.message;
+  return Array.isArray(mensaje) ? mensaje.join(' ') : (mensaje ?? null);
 }
 
 @Component({
@@ -71,7 +87,8 @@ export class ReservarComponent {
   readonly errorEnvio = signal<string | null>(null);
   readonly confirmada = signal<Reserva | null>(null);
 
-  readonly hoy = hoyIso();
+  readonly hoy = aIso(new Date());
+  readonly maxEntrada = sumarDias(this.hoy, MAX_ANTICIPACION_DIAS);
 
   /** Franjas de llegada ofrecidas al huésped. */
   readonly horas = Array.from({ length: 14 }, (_, i) => {
@@ -83,14 +100,12 @@ export class ReservarComponent {
   /** La salida nunca puede ser anterior o igual a la entrada. */
   readonly minSalida = computed(() => {
     const e = this.entrada();
-    if (!e) {
-      return this.hoy;
-    }
-    const d = new Date(`${e}T00:00:00`);
-    d.setDate(d.getDate() + 1);
-    const mes = `${d.getMonth() + 1}`.padStart(2, '0');
-    const dia = `${d.getDate()}`.padStart(2, '0');
-    return `${d.getFullYear()}-${mes}-${dia}`;
+    return e ? sumarDias(e, 1) : this.hoy;
+  });
+
+  readonly maxSalida = computed(() => {
+    const e = this.entrada();
+    return sumarDias(e || this.maxEntrada, MAX_NOCHES);
   });
 
   readonly noches = computed(() => {
@@ -136,7 +151,7 @@ export class ReservarComponent {
         this.cargar(id);
       } else {
         this.cargando.set(false);
-        this.errorCarga.set('La propiedad que buscás no existe.');
+        this.errorCarga.set('La propiedad que buscas no existe.');
       }
     });
   }
@@ -208,13 +223,10 @@ export class ReservarComponent {
         },
         error: (err: HttpErrorResponse) => {
           this.enviando.set(false);
-          if (err.status === 409) {
-            this.errorEnvio.set('Esas fechas ya están reservadas para esta propiedad');
-          } else if (err.status === 400) {
-            this.errorEnvio.set('Revisá las fechas: la salida debe ser posterior a la entrada.');
-          } else {
-            this.errorEnvio.set('No pudimos confirmar la reserva. Intentá de nuevo.');
-          }
+          // 400, 403 y 409 traen el motivo exacto (fechas, estadía máxima, reservar lo
+          // propio, fechas ocupadas): se muestra el del servidor.
+          const motivo = [400, 403, 409].includes(err.status) ? mensajeDelServidor(err) : null;
+          this.errorEnvio.set(motivo ?? 'No pudimos registrar la reserva. Intenta de nuevo.');
         },
       });
   }

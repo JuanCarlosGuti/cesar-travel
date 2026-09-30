@@ -57,7 +57,7 @@ export class MensajesComponent {
               ? mensaje.join('. ')
               : typeof mensaje === 'string' && mensaje.trim() !== ''
                 ? mensaje
-                : 'No pudimos cargar tus mensajes. Intentá de nuevo.',
+                : 'No pudimos cargar tus mensajes. Intenta de nuevo.',
           );
         }
       },

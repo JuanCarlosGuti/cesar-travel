@@ -26,7 +26,8 @@ import {
           <span
             class="estrella"
             [class.activa]="indice <= activas()"
-            [attr.role]="seleccionable() ? 'button' : null"
+            [attr.role]="seleccionable() ? 'radio' : null"
+            [attr.aria-checked]="seleccionable() ? indice === valor() : null"
             [attr.tabindex]="seleccionable() ? 0 : null"
             [attr.aria-label]="seleccionable() ? indice + ' de 5' : null"
             (click)="elegir(indice)"
@@ -72,7 +73,7 @@ export class EstrellasComponent {
 
   protected readonly etiqueta = computed(() =>
     this.seleccionable()
-      ? 'Elegí un puntaje de 1 a 5 estrellas'
+      ? 'Elige un puntaje de 1 a 5 estrellas'
       : `${Math.round(this.valor())} de 5 estrellas`,
   );
 

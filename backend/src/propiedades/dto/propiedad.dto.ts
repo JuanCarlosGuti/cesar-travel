@@ -1,32 +1,46 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
   ArrayNotEmpty,
   IsArray,
   IsInt,
   IsNotEmpty,
   IsOptional,
+  IsString,
+  Max,
+  MaxLength,
   Min,
 } from 'class-validator';
 import { Propiedad } from '../entidades/propiedad.entity';
 
+// Los largos máximos siguen al formulario (título) o a la columna (descripción,
+// varchar(1000)): sin ellos, un texto más largo llegaba a la base y respondía 500.
 export class PropiedadDto {
+  @IsString()
   @IsNotEmpty({ message: 'El título es obligatorio' })
+  @MaxLength(120, { message: 'El título admite hasta 120 caracteres' })
   titulo: string;
 
+  @IsString()
   @IsNotEmpty({ message: 'La descripción es obligatoria' })
+  @MaxLength(1000, { message: 'La descripción admite hasta 1000 caracteres' })
   descripcion: string;
 
+  @IsString()
   @IsNotEmpty({ message: 'La dirección es obligatoria' })
+  @MaxLength(200, { message: 'La dirección admite hasta 200 caracteres' })
   direccion: string;
 
   @Type(() => Number)
   @IsInt()
   @Min(1)
+  @Max(50)
   habitaciones: number;
 
   @Type(() => Number)
   @IsInt()
   @Min(1)
+  @Max(50)
   banos: number;
 
   @Type(() => Number)
@@ -38,18 +52,25 @@ export class PropiedadDto {
   municipioId: number;
 
   @IsArray()
-  @ArrayNotEmpty({ message: 'Elegí al menos un servicio' })
+  @ArrayNotEmpty({ message: 'Elige al menos un servicio' })
+  @ArrayMaxSize(50)
   @Type(() => Number)
   @IsInt({ each: true })
   caracteristicaIds: number[];
 
   @IsOptional()
+  @IsString()
+  @MaxLength(1000)
   normas?: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(1000)
   saludYSeguridad?: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(1000)
   politicaCancelacion?: string;
 }
 

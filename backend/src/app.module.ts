@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { Usuario } from './auth/entidades/usuario.entity';
 import { CatalogoModule } from './catalogo/catalogo.module';
@@ -17,16 +15,11 @@ import { Propiedad } from './propiedades/entidades/propiedad.entity';
 import { PropiedadesModule } from './propiedades/propiedades.module';
 import { ResenasModule } from './resenas/resenas.module';
 import { ReservasModule } from './reservas/reservas.module';
+import { SpaModule } from './spa/spa.module';
 
 @Module({
   imports: [
     DatabaseModule,
-    // El backend sirve el build de Angular: un solo proceso y un solo puerto. Las rutas
-    // de la SPA caen en index.html y las de /api/* las atienden los controladores.
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-      exclude: ['/api/{*path}'],
-    }),
     AuthModule,
     CatalogoModule,
     PropiedadesModule,
@@ -42,6 +35,9 @@ import { ReservasModule } from './reservas/reservas.module';
       Caracteristica,
       Propiedad,
     ]),
+    // El backend sirve el build de Angular: un solo proceso y un solo puerto. SIEMPRE el
+    // último: su ruta comodín tiene que registrarse después de todas las de la API.
+    SpaModule,
   ],
   // El healthcheck del proxy del servidor. Vive aquí y no en un módulo propio
   // porque no tiene dependencias: solo necesita el DataSource, que TypeOrmModule

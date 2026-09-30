@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostListener, computed, inject, signal } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
@@ -8,6 +8,7 @@ import { ApiService } from '../../nucleo/api';
 import { SesionService } from '../../nucleo/sesion';
 import { Ocupante, PropiedadDetalle, RangoOcupado, Resena } from '../../nucleo/modelos';
 import { EstrellasComponent } from '../../comun/estrellas/estrellas';
+import { MARCA } from '../../nucleo/titulo';
 
 const MESES = [
   'enero',
@@ -45,6 +46,7 @@ function fechaLarga(iso: string): string {
 })
 export class DetalleComponent {
   private readonly api = inject(ApiService);
+  private readonly titulo = inject(Title);
   private readonly sesion = inject(SesionService);
   private readonly ruta = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -112,7 +114,7 @@ export class DetalleComponent {
         this.cargar(id);
       } else {
         this.cargando.set(false);
-        this.error.set('La propiedad que buscás no existe.');
+        this.error.set('La propiedad que buscas no existe.');
       }
     });
   }
@@ -128,12 +130,13 @@ export class DetalleComponent {
       .subscribe({
         next: (p) => {
           this.propiedad.set(p);
+          this.titulo.setTitle(`${p.titulo} · ${MARCA}`);
           this.cargando.set(false);
           this.cargarOcupantesSiEsDuenio(p);
         },
         error: () => {
           this.cargando.set(false);
-          this.error.set('No pudimos cargar esta propiedad. Intentá de nuevo en un momento.');
+          this.error.set('No pudimos cargar esta propiedad. Intenta de nuevo en un momento.');
         },
       });
 
@@ -182,7 +185,7 @@ export class DetalleComponent {
 
   compartir(): void {
     const url = window.location.href;
-    const titulo = this.propiedad()?.titulo ?? 'Cañaguate Travel';
+    const titulo = this.propiedad()?.titulo ?? MARCA;
 
     if (navigator.share) {
       navigator.share({ title: titulo, url }).catch(() => {

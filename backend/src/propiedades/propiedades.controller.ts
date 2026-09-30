@@ -21,7 +21,7 @@ import { JwtGuard } from '../comun/jwt.guard';
 import type { UsuarioAutenticado } from '../comun/jwt.guard';
 import { UsuarioActual } from '../comun/usuario-actual.decorator';
 import { aDetalle, aResumen, PropiedadDto } from './dto/propiedad.dto';
-import { PropiedadesService } from './propiedades.service';
+import { PropiedadesService, TAMANIO_MAXIMO_BYTES } from './propiedades.service';
 
 @ApiTags('propiedades')
 @Controller('api')
@@ -86,7 +86,9 @@ export class PropiedadesController {
   /** Sube archivos reales (multipart) y los agrega a la galería. */
   @Post('propiedades/:id/imagenes')
   @UseGuards(JwtGuard)
-  @UseInterceptors(FilesInterceptor('archivos', 10))
+  // Sin `limits`, Multer aceptaba archivos de cualquier tamaño en memoria antes de que
+  // el servicio los validara: una sola petición podía agotar la RAM del servidor.
+  @UseInterceptors(FilesInterceptor('archivos', 10, { limits: { fileSize: TAMANIO_MAXIMO_BYTES } }))
   async agregarImagenes(
     @Param('id', ParseIntPipe) id: number,
     @UploadedFiles() archivos: Express.Multer.File[],

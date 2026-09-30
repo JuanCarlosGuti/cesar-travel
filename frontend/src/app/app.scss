@@ -13,3 +13,21 @@
   padding-bottom: $footer-h;
   min-height: 100vh;
 }
+
+.aviso-demo {
+  margin: 0;
+  padding: 8px $navbar-padding-h;
+  // Arena y no Cañaguate: varias páginas (la ficha, por ejemplo) abren con un
+  // encabezado dorado, y un aviso del mismo color se confundía con él.
+  background-color: $colorFondo;
+  border-bottom: 1px solid rgba($Dark, 0.12);
+  color: $Dark;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-align: center;
+
+  a {
+    color: $colorAccent;
+    font-weight: 600;
+  }
+}

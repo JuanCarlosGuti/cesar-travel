@@ -25,17 +25,21 @@ npm run build   # compila Angular hacia backend/public y luego el backend
 npm start       # backend en modo desarrollo, sirve también la web
 ```
 
-Abrir **http://localhost:3000** — documentación de la API en `/api/docs` (Swagger).
+Abrir **http://localhost:3000** — documentación de la API en `/api/docs` (Swagger; solo
+fuera de producción).
 
 La primera vez, la base se crea sola y se siembra con el catálogo de demostración:
 12 municipios, 4 categorías, 28 propiedades y una cuenta de anfitrión
 (`anfitrion@canaguatetravel.com`) dueña de todas ellas.
 
-Su contraseña sale de `SEED_ADMIN_PASSWORD` (copiá `backend/.env.example` a
-`backend/.env` y definila). En producción, si no se define, el seed **genera una
-aleatoria y la muestra una sola vez en los logs del arranque**: esa cuenta es ADMIN
-—puede editar cualquier propiedad y ver la identidad de los huéspedes— así que nunca
-debe tener una contraseña escrita en el repositorio.
+Su contraseña sale de `SEED_ADMIN_PASSWORD` (copia `backend/.env.example` a
+`backend/.env` y defínela). En producción es **obligatoria**: si falta, el seed falla en
+vez de inventar una. Esa cuenta es ADMIN —puede editar cualquier propiedad y ver la
+identidad de los huéspedes— así que nunca debe tener una contraseña escrita en el
+repositorio ni aparecer en los logs.
+
+El sitio es una **demostración**: los alojamientos del catálogo son ficticios y un aviso
+visible en todas las páginas lo dice.
 
 Para desarrollar el frontend con recarga automática: `npm run front`
 (Angular en http://localhost:4200, con proxy hacia el backend en :3000).
@@ -99,7 +103,8 @@ de producción.
 - **Detalle**: galería con visor, servicios, políticas, mapa del municipio (OpenStreetMap),
   reseñas y — para el anfitrión — la lista de quién reservó y cuándo.
 - **Reservas** con validación de solapamiento (rango semiabierto: se puede entrar el mismo
-  día que otro huésped se va) y cancelación.
+  día que otro huésped se va), límites contra el abuso (desde hoy, hasta un año adelante,
+  máximo 30 noches, el dueño no reserva lo suyo) y cancelación antes de la entrada.
 - **Reseñas**: solo quien se hospedó y ya terminó su estadía, una por propiedad.
 - **Chat interno** huésped↔anfitrión por propiedad, con no leídos y actualización por sondeo.
   Reemplaza al contacto por WhatsApp: no se expone ningún dato de contacto personal.

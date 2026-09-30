@@ -17,7 +17,7 @@ import { Imagen } from './entidades/imagen.entity';
 import { Propiedad } from './entidades/propiedad.entity';
 
 const TIPOS_IMAGEN_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp'];
-const TAMANIO_MAXIMO_BYTES = 8 * 1024 * 1024;
+export const TAMANIO_MAXIMO_BYTES = 8 * 1024 * 1024;
 
 /**
  * Optimización de las imágenes que se suben. Una foto de celular ronda los 4-6 MB y no
@@ -65,7 +65,7 @@ export class PropiedadesService {
     solicitante: UsuarioAutenticado,
   ): Promise<Propiedad[]> {
     if (duenioId !== solicitante.id && solicitante.rol !== 'ADMIN') {
-      throw new ForbiddenException('Solo podés ver tus propias propiedades');
+      throw new ForbiddenException('Solo puedes ver tus propias propiedades');
     }
     return this.propiedades.find({
       where: { duenio: { id: duenioId } },
@@ -234,7 +234,7 @@ export class PropiedadesService {
   ): void {
     const esDuenio = propiedad.duenio?.id === solicitante.id;
     if (!esDuenio && solicitante.rol !== 'ADMIN') {
-      throw new ForbiddenException('No sos el dueño de esta propiedad');
+      throw new ForbiddenException('No eres el dueño de esta propiedad');
     }
   }
 }

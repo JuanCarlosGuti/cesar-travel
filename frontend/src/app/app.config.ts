@@ -4,8 +4,9 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { TitleStrategy, provideRouter, withInMemoryScrolling } from '@angular/router';
 import { authInterceptor } from './nucleo/auth.interceptor';
+import { TituloConMarca } from './nucleo/titulo';
 import { rutas } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -18,5 +19,6 @@ export const appConfig: ApplicationConfig = {
       // Al navegar se vuelve arriba (si no, se entra a un detalle a media página).
       withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' }),
     ),
+    { provide: TitleStrategy, useClass: TituloConMarca },
   ],
 };

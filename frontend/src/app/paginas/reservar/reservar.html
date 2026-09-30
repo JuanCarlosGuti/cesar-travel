@@ -24,9 +24,11 @@
       </svg>
     </div>
 
-    <h1>¡Reserva confirmada!</h1>
+    <!-- No dice "confirmada": no hay pago ni un anfitrión real que confirme. -->
+    <h1>Reserva registrada</h1>
     <p class="confirmacion__bajada">
-      Te esperamos en {{ reserva.propiedad.municipio.nombre }}. Guardá estos datos.
+      Quedó guardada en «Mis reservas». Este es un sitio de demostración: no se hizo ningún
+      cobro y el alojamiento no existe.
     </p>
 
     <dl class="resumen-reserva">
@@ -64,12 +66,12 @@
 } @else if (propiedad(); as p) {
   <header class="encabezado">
     <div class="contenedor">
-      <h1>Confirmá tu reserva</h1>
-      <p>Revisá los datos y elegí las fechas de tu estadía.</p>
+      <h1>Confirma tu reserva</h1>
+      <p>Revisa los datos y elige las fechas de tu estadía.</p>
     </div>
   </header>
 
-  <main class="contenedor pagina">
+  <div class="contenedor pagina">
     <!-- Resumen de la propiedad ------------------------------------------ -->
     <aside class="tarjeta-propiedad">
       @if (p.imagenes.length) {
@@ -124,6 +126,7 @@
             name="entrada"
             [value]="entrada()"
             [min]="hoy"
+            [max]="maxEntrada"
             (change)="cambiarEntrada($any($event.target).value)"
             required
           />
@@ -136,6 +139,7 @@
             name="salida"
             [value]="salida()"
             [min]="minSalida()"
+            [max]="maxSalida()"
             (change)="cambiarSalida($any($event.target).value)"
             required
           />
@@ -165,7 +169,7 @@
 
       @if (solapa()) {
         <p class="error">
-          Esas fechas se cruzan con una reserva existente. Elegí otro rango.
+          Esas fechas se cruzan con una reserva existente. Elige otro rango.
         </p>
       }
 
@@ -181,5 +185,5 @@
         {{ enviando() ? 'Confirmando…' : 'Confirmar reserva' }}
       </button>
     </form>
-  </main>
+  </div>
 }

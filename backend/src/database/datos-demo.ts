@@ -216,7 +216,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   {
     titulo: 'Casa entre el río y el mar',
     descripcion:
-      'Casa tropical a mitad de camino entre el río Palomino y la playa — podés hacer tubing en el río por la mañana y ver el atardecer en el mar.',
+      'Casa tropical a mitad de camino entre el río Palomino y la playa — puedes hacer tubing en el río por la mañana y ver el atardecer en el mar.',
     direccion: 'Km 1 vía al río, Palomino',
     habitaciones: 3,
     banos: 2,

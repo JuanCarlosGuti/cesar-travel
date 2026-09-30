@@ -1,7 +1,6 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { randomBytes } from 'crypto';
 import * as bcrypt from 'bcryptjs';
 import { Usuario } from '../auth/entidades/usuario.entity';
 import { Caracteristica } from '../catalogo/entidades/caracteristica.entity';
@@ -202,10 +201,11 @@ export class SeedService implements OnApplicationBootstrap {
 
   /**
    * Contraseña del anfitrión de demostración, nunca escrita en el código:
-   *  - SEED_ADMIN_PASSWORD definida → esa (la vía recomendada en producción).
-   *  - Producción sin definirla     → una aleatoria, mostrada una sola vez en los logs
-   *                                   (la cuenta es ADMIN; no puede quedar con una
-   *                                   contraseña conocida ni adivinable).
+   *  - SEED_ADMIN_PASSWORD definida → esa (obligatoria en producción).
+   *  - Producción sin definirla     → el arranque falla. Antes se generaba una al azar
+   *                                   y se escribía en el log, pero la cuenta es ADMIN y
+   *                                   los logs de un servidor compartido los lee más
+   *                                   gente y quedan guardados.
    *  - Desarrollo local             → una fija y cómoda, sin valor fuera de tu máquina.
    */
   private passwordDelAnfitrion(): string {
@@ -214,12 +214,10 @@ export class SeedService implements OnApplicationBootstrap {
       return definida;
     }
     if (process.env.DATABASE_URL) {
-      const generada = randomBytes(12).toString('base64url');
-      this.logger.warn(
-        `SEED_ADMIN_PASSWORD no está definida: se generó una contraseña para ` +
-          `${ANFITRION_DEMO.email} → ${generada} (anotala, no vuelve a mostrarse).`,
+      throw new Error(
+        `SEED_ADMIN_PASSWORD no está definida: no se crea la cuenta ADMIN ` +
+          `${ANFITRION_DEMO.email} sin una contraseña elegida por quien administra.`,
       );
-      return generada;
     }
     return 'desarrollo-local';
   }

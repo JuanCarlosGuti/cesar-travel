@@ -35,8 +35,20 @@ Hoy ya no corre en Render sino en un servidor propio (ver "Despliegue").
   en cada despliegue. Los datos de demo viven en `src/database/datos-demo.ts`.
 - Frontend Angular 20 **standalone + signals**, rutas con `loadComponent` (lazy), `@if`/`@for`
   (nunca `*ngIf`/`*ngFor`), `input()`/`output()` como funciones, OnPush.
-- El backend sirve el build de Angular con `ServeStaticModule` (un proceso, un puerto). En
-  desarrollo, `ng serve` usa `frontend/proxy.conf.json` para llegar al backend.
+- El backend sirve el build de Angular (un proceso, un puerto): `useStaticAssets` los
+  archivos y `SpaController` (`src/spa`) el `index.html`. No `ServeStaticModule`, que
+  respondía 200 con la home a cualquier ruta: `SpaController` responde 404 a lo que no está
+  en `RUTAS_SPA` (mantenerla en sync con `app.routes.ts`), sirve `robots.txt` y
+  `sitemap.xml`, y pone título, descripción e imagen de cada alojamiento en el HTML para las
+  vistas previas de WhatsApp. `SpaModule` va **último** en AppModule: su ruta comodín no
+  puede registrarse antes que las de la API. En desarrollo, `ng serve` usa
+  `frontend/proxy.conf.json` para llegar al backend.
+- Seguridad HTTP en `main.ts`: helmet con CSP en producción. **Un origen externo nuevo**
+  (CDN, analítica, otro iframe) **hay que sumarlo a la CSP** o el navegador lo bloquea solo
+  en producción. Swagger (`/api/docs`) existe solo fuera de producción. Login y registro
+  tienen límite de intentos por IP (`@nestjs/throttler`).
+- El sitio es una **demo de portafolio**: los alojamientos del seed son ficticios y un aviso
+  fijo bajo el header lo dice (`app.html`). No quitarlo mientras el catálogo no sea real.
 - Estilos: variables de marca en `frontend/src/styles/_tokens.scss`, se importan con
   `@use 'tokens' as *;` (hay `stylePreprocessorOptions.includePaths` configurado, así que
   funciona desde cualquier profundidad). Nunca `@import` de Sass (deprecado).
@@ -73,6 +85,11 @@ Guajira `#c1502e` (terracota, acentos), Noche `#16283f` (navbar/footer/texto), A
 - **Reservas**: rango semiabierto `[entrada, salida)` — dos reservas se solapan si cada una
   empieza antes de que termine la otra; se puede entrar el mismo día que otro se va. Solapar
   responde 409. La validación no es a prueba de concurrencia (aceptable a este volumen).
+- **Límites de reserva** (contra el abuso: bloquear calendarios o fabricar reseñas con
+  estadías inventadas): entrada desde hoy y hasta un año adelante, máximo 30 noches (400);
+  el dueño no reserva lo suyo (403); máximo 2 reservas por venir de un huésped en la misma
+  propiedad (409). Solo se cancela lo que no ha empezado (409), salvo un admin. "Hoy" es
+  el de Colombia (`comun/fechas.ts`), no el UTC del servidor.
 - **Reseñas**: solo quien tuvo una reserva con `salida <= hoy` en esa propiedad (403 si no), y
   una sola por usuario y propiedad (409). El promedio de las tarjetas se pide en lote
   (`/api/resenas/resumen?propiedadIds=1,2,3`) para no hacer N+1.
@@ -94,8 +111,10 @@ vez por la contraseña del anfitrión de demostración, que estaba escrita en
 - En desarrollo, `backend/.env` (ignorado por git; hay un `.env.example` versionado con
   los nombres y valores de ejemplo). Lo carga `import 'dotenv/config'` como primera línea
   de `main.ts`, antes de que cualquier módulo lea `process.env`.
-- En producción las inyecta la plataforma: `DATABASE_URL`, `JWT_SECRET` y opcionalmente
-  `SEED_ADMIN_PASSWORD` (si falta, el seed genera una aleatoria y la loguea una vez).
+- En producción las inyecta la plataforma: `DATABASE_URL`, `JWT_SECRET` y
+  `SEED_ADMIN_PASSWORD`. Sin `JWT_SECRET` la app no arranca (caería al secreto de
+  desarrollo, que es público); sin `SEED_ADMIN_PASSWORD`, el seed de una base vacía falla
+  en vez de inventar una contraseña de ADMIN y escribirla en los logs.
 - La cuenta sembrada `anfitrion@canaguatetravel.com` es **ADMIN**: puede editar y borrar
   cualquier propiedad y ver la identidad de los huéspedes. Su contraseña nunca puede
   quedar en el repositorio ni ser adivinable.

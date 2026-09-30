@@ -13,7 +13,7 @@ export class RegistroDto {
   @IsNotEmpty({ message: 'El apellido es obligatorio' })
   apellido: string;
 
-  @IsEmail({}, { message: 'Ingresá un email válido' })
+  @IsEmail({}, { message: 'Ingresa un email válido' })
   email: string;
 
   @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
@@ -28,7 +28,7 @@ export class RegistroDto {
 }
 
 export class LoginDto {
-  @IsEmail({}, { message: 'Ingresá un email válido' })
+  @IsEmail({}, { message: 'Ingresa un email válido' })
   email: string;
 
   @IsNotEmpty({ message: 'La contraseña es obligatoria' })
