@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './nucleo/admin.guard';
 import { sesionGuard } from './nucleo/sesion.guard';
 
 /**
@@ -86,6 +87,12 @@ export const rutas: Routes = [
     canActivate: [sesionGuard],
     loadComponent: () =>
       import('./paginas/mensajes/conversacion').then((m) => m.ConversacionComponent),
+  },
+  {
+    path: 'admin',
+    title: 'Administración',
+    canActivate: [sesionGuard, adminGuard],
+    loadComponent: () => import('./paginas/admin/admin').then((m) => m.AdminComponent),
   },
   {
     path: '**',

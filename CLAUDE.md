@@ -109,6 +109,15 @@ seed no toca producción, que necesita su propio UPDATE o INSERT.
   (`/api/reservas/disponibilidad/:id`) es pública pero solo devuelve fechas, sin identidad.
 - **Propiedades**: el dueño sale siempre del JWT, nunca del body. Editar una propiedad **no**
   toca su galería (las imágenes tienen sus propios endpoints).
+- **Administración** (`/admin`, solo ADMIN; `src/admin`): ver todos los alojamientos,
+  reservas, usuarios y reseñas; bloquear o desbloquear cuentas, cambiar el rol y borrar
+  reseñas. Editar o borrar un alojamiento y cancelar una reserva **reutilizan** los
+  endpoints de siempre, que ya dejan pasar a un ADMIN. Nadie cambia su propio rol ni se
+  bloquea, y siempre queda al menos un ADMIN activo (409). Los usuarios **no se borran**,
+  se bloquean: borrar se llevaría reservas y reseñas y dejaría alojamientos sin dueño.
+  `JwtGuard` lee al usuario de la base en cada petición (no solo el token): un bloqueo o un
+  cambio de rol surte efecto de inmediato. Subir la primera cuenta a ADMIN se hace en la
+  base; las siguientes, desde el panel.
 - **Chat**: una conversación por (propiedad, huésped); el dueño se resuelve desde la
   propiedad. Todos los endpoints validan participación (403 a terceros). El frontend
   actualiza por sondeo (hilo ~4 s, contador del header ~20 s), no WebSocket.

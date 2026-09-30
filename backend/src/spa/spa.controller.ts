@@ -28,6 +28,7 @@ const RUTAS_SPA = [
   /^\/mis-propiedades$/,
   /^\/publicar(\/\d+)?$/,
   /^\/mensajes(\/\d+)?$/,
+  /^\/admin$/,
 ];
 const RUTA_DETALLE = /^\/propiedades\/(\d+)$/;
 
@@ -74,6 +75,7 @@ export class SpaController {
         'Disallow: /mis-propiedades',
         'Disallow: /publicar',
         'Disallow: /mensajes',
+        'Disallow: /admin',
         '',
         `Sitemap: ${origen}/sitemap.xml`,
         '',

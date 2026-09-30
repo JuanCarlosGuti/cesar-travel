@@ -70,6 +70,7 @@
   color: $colorFondo;
   font-size: 0.95rem;
   font-weight: 500;
+  white-space: nowrap;
   padding: 6px 2px;
   border-bottom: 2px solid transparent;
   transition: color 180ms ease, border-color 180ms ease;
@@ -152,7 +153,11 @@
   flex-shrink: 0;
 }
 
+// En la barra de escritorio no cabe junto a los enlaces (y menos con el de
+// Administración): ahí el nombre lo dan las iniciales. En el menú desplegable del
+// móvil sí hay espacio y el saludo vuelve (ver el bloque de la hamburguesa).
 .usuario__saludo {
+  display: none;
   color: $colorFondo;
   font-size: 0.9rem;
   white-space: nowrap;
@@ -206,7 +211,9 @@
 
 // Móvil ---------------------------------------------------------------------
 
-@include breakpoint-down('medium') {
+// Hamburguesa por debajo de 1280 px y no de 768: con cinco enlaces (seis para un
+// ADMIN) la barra completa solo cabe desde ese ancho, y en tablets se desbordaba.
+@include breakpoint-down('large') {
   .hamburguesa {
     display: flex;
   }

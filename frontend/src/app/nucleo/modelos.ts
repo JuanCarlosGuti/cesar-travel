@@ -124,3 +124,51 @@ export interface RangoOcupado {
   entrada: string;
   salida: string;
 }
+
+// Panel de administración ---------------------------------------------------
+
+export interface Persona {
+  id: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+}
+
+export interface AdminResumen {
+  usuarios: number;
+  admins: number;
+  bloqueados: number;
+  propiedades: number;
+  reservas: number;
+  reservasPorVenir: number;
+  resenas: number;
+}
+
+export interface AdminUsuario extends Persona {
+  rol: 'USER' | 'ADMIN';
+  bloqueado: boolean;
+  propiedades: number;
+  reservas: number;
+}
+
+export interface AdminPropiedad extends PropiedadResumen {
+  duenio: Persona | null;
+  reservas: number;
+}
+
+export interface AdminReserva {
+  id: number;
+  entrada: string;
+  salida: string;
+  propiedad: { id: number; titulo: string };
+  huesped: Persona | null;
+}
+
+export interface AdminResena {
+  id: number;
+  puntaje: number;
+  comentario: string | null;
+  creadaEn: string;
+  propiedad: { id: number; titulo: string };
+  autor: Persona | null;
+}

@@ -26,6 +26,9 @@
             Mis Propiedades
           </a>
           <a routerLink="/mis-reservas" routerLinkActive="activo" class="enlace">Mis Reservas</a>
+          @if (sesion.usuario()?.rol === 'ADMIN') {
+            <a routerLink="/admin" routerLinkActive="activo" class="enlace">Administración</a>
+          }
           <a routerLink="/mensajes" routerLinkActive="activo" class="enlace enlace--badge">
             Mensajes
             @if (sinLeer() > 0) {
@@ -37,7 +40,12 @@
         </div>
 
         <div class="usuario">
-          <span class="usuario__avatar" aria-hidden="true">{{ iniciales() }}</span>
+          <span
+            class="usuario__avatar"
+            role="img"
+            [attr.title]="sesion.usuario()?.nombre + ' ' + sesion.usuario()?.apellido"
+            [attr.aria-label]="'Sesión de ' + sesion.usuario()?.nombre + ' ' + sesion.usuario()?.apellido"
+          >{{ iniciales() }}</span>
           <span class="usuario__saludo">
             Hola, {{ sesion.usuario()?.nombre }} {{ sesion.usuario()?.apellido }}
           </span>

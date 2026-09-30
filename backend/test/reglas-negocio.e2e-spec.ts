@@ -4,6 +4,7 @@ import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { Repository } from 'typeorm';
+import { AdminModule } from '../src/admin/admin.module';
 import { AuthModule } from '../src/auth/auth.module';
 import { Usuario } from '../src/auth/entidades/usuario.entity';
 import { CatalogoModule } from '../src/catalogo/catalogo.module';
@@ -57,6 +58,7 @@ describe('Reglas de negocio (e2e)', () => {
         ReservasModule,
         ResenasModule,
         ChatModule,
+        AdminModule,
       ],
     }).compile();
 
@@ -263,17 +265,91 @@ describe('Reglas de negocio (e2e)', () => {
       .expect(404);
   });
 
-  // La última: agota el cupo de intentos de login desde esta IP.
-  it('limita los intentos de login', async () => {
-    for (let intento = 0; intento < 10; intento++) {
+  describe('panel de administración', () => {
+    let tokenAdmin: string;
+
+    beforeAll(async () => {
+      // Ana pasa a ADMIN directo en la base: JwtGuard lee el rol de ahí, así que su
+      // token de siempre ya vale como ADMIN sin volver a iniciar sesión.
+      await usuarios.update({ email: 'ana@test.co' }, { rol: 'ADMIN' });
+      tokenAdmin = tokenAnfitrion;
+    });
+
+    it('rechaza a quien no es ADMIN', async () => {
+      await servidor
+        .get('/api/admin/usuarios')
+        .set('Authorization', `Bearer ${tokenHuesped}`)
+        .expect(403);
+    });
+
+    it('le muestra al ADMIN el resumen y los usuarios, sin contraseñas', async () => {
+      const resumen = await servidor
+        .get('/api/admin/resumen')
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(200);
+      expect(resumen.body.usuarios).toBe(3);
+
+      const lista = await servidor
+        .get('/api/admin/usuarios')
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(200);
+      expect(lista.body).toHaveLength(3);
+      expect(JSON.stringify(lista.body)).not.toContain('password');
+    });
+
+    it('no deja que el ADMIN se quite el rol ni se bloquee', async () => {
+      const ana = await usuarios.findOneByOrFail({ email: 'ana@test.co' });
+      await servidor
+        .patch(`/api/admin/usuarios/${ana.id}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .send({ bloqueado: true })
+        .expect(409);
+    });
+
+    it('bloquear corta la sesión abierta y el login', async () => {
+      const caro = await usuarios.findOneByOrFail({ email: 'caro@test.co' });
+      await servidor
+        .patch(`/api/admin/usuarios/${caro.id}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .send({ bloqueado: true })
+        .expect(200);
+
+      await servidor.get('/api/auth/yo').set('Authorization', `Bearer ${tokenOtro}`).expect(401);
       await servidor
         .post('/api/auth/login')
-        .send({ email: 'ana@test.co', password: 'incorrecta' })
-        .expect(401);
+        .send({ email: 'caro@test.co', password: 'password123' })
+        .expect(403);
+    });
+
+    it('deja al ADMIN borrar una reseña ajena', async () => {
+      const lista = await servidor
+        .get('/api/admin/resenas')
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(200);
+      expect(lista.body.length).toBeGreaterThan(0);
+
+      await servidor
+        .delete(`/api/admin/resenas/${lista.body[0].id}`)
+        .set('Authorization', `Bearer ${tokenAdmin}`)
+        .expect(204);
+    });
+  });
+
+  // La última: agota el cupo de intentos de login desde esta IP. Las pruebas de arriba
+  // ya gastaron alguno en el mismo minuto, así que se cuenta hasta el primer 429.
+  it('limita los intentos de login', async () => {
+    let rechazosPorClave = 0;
+    let estado = 401;
+    while (estado === 401 && rechazosPorClave <= 10) {
+      const respuesta = await servidor
+        .post('/api/auth/login')
+        .send({ email: 'ana@test.co', password: 'incorrecta' });
+      estado = respuesta.status;
+      if (estado === 401) {
+        rechazosPorClave++;
+      }
     }
-    await servidor
-      .post('/api/auth/login')
-      .send({ email: 'ana@test.co', password: 'incorrecta' })
-      .expect(429);
+    expect(estado).toBe(429);
+    expect(rechazosPorClave).toBeLessThanOrEqual(10);
   });
 });

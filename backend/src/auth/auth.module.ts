@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtGuard, JwtOpcionalGuard } from '../comun/jwt.guard';
+import { AdminGuard, JwtGuard, JwtOpcionalGuard } from '../comun/jwt.guard';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { Usuario } from './entidades/usuario.entity';
@@ -50,7 +50,8 @@ function secretoJwt(): string {
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 10 }]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtGuard, JwtOpcionalGuard],
-  exports: [JwtModule, JwtGuard, JwtOpcionalGuard],
+  providers: [AuthService, JwtGuard, JwtOpcionalGuard, AdminGuard],
+  // TypeOrmModule: los guards consultan la tabla de usuarios desde cualquier módulo.
+  exports: [JwtModule, TypeOrmModule, JwtGuard, JwtOpcionalGuard, AdminGuard],
 })
 export class AuthModule {}

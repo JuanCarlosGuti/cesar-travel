@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -47,6 +52,10 @@ export class AuthService {
     // a un atacante qué emails están registrados.
     if (!usuario || !(await bcrypt.compare(datos.password, usuario.password))) {
       throw new UnauthorizedException('Email o contraseña incorrectos');
+    }
+    // Después de validar la contraseña: a quien no la sabe no se le confirma que la cuenta existe.
+    if (usuario.bloqueado) {
+      throw new ForbiddenException('Esta cuenta está bloqueada');
     }
     return this.aSesion(usuario);
   }

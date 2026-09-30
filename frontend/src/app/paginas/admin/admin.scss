@@ -1,0 +1,238 @@
+@use 'tokens' as *;
+
+.admin {
+  max-width: $mx-w;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.encabezado {
+  margin-bottom: 24px;
+
+  h1 {
+    font-family: $fontSerif;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    color: $Dark;
+    margin: 0 0 6px;
+  }
+
+  p {
+    margin: 0;
+    color: rgba($Dark, 0.7);
+  }
+}
+
+.alerta {
+  background: rgba($colorAccent, 0.1);
+  border-left: 4px solid $colorAccent;
+  color: $colorAccent;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin: 0 0 18px;
+  font-size: 0.92rem;
+}
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 0 0 28px;
+
+  div {
+    background: $light;
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 4px rgba($Dark, 0.08);
+  }
+
+  dt {
+    font-size: 0.8rem;
+    color: rgba($Dark, 0.65);
+  }
+
+  dd {
+    margin: 4px 0 0;
+    font-family: $fontSerif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $Dark;
+
+    small {
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: rgba($Dark, 0.6);
+    }
+  }
+}
+
+.pestanas {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid rgba($Dark, 0.1);
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+
+.pestana {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 600;
+  color: rgba($Dark, 0.65);
+  cursor: pointer;
+  white-space: nowrap;
+
+  &.activa {
+    color: $Dark;
+    border-bottom-color: $colorPpal;
+  }
+
+  .contador {
+    display: inline-block;
+    min-width: 22px;
+    padding: 1px 6px;
+    margin-left: 4px;
+    border-radius: 10px;
+    background: rgba($Dark, 0.08);
+    font-size: 0.78rem;
+    text-align: center;
+  }
+}
+
+.aviso {
+  color: rgba($Dark, 0.7);
+}
+
+// Las tablas se desplazan de lado en pantallas angostas en vez de romper la página.
+.tabla-contenedor {
+  overflow-x: auto;
+  background: $light;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba($Dark, 0.08);
+}
+
+table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  color: $Dark;
+}
+
+th {
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba($Dark, 0.6);
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba($Dark, 0.1);
+}
+
+td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba($Dark, 0.06);
+  vertical-align: top;
+
+  a {
+    color: $Dark;
+    font-weight: 600;
+  }
+}
+
+tr.bloqueado td {
+  opacity: 0.55;
+}
+
+.secundario {
+  display: block;
+  color: rgba($Dark, 0.6);
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+.numero {
+  text-align: right;
+}
+
+.comentario {
+  max-width: 320px;
+}
+
+.estrellas {
+  color: $colorPpal;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba($Dark, 0.08);
+
+  &[data-rol='ADMIN'] {
+    background: rgba($colorPpal, 0.2);
+    color: $Dark;
+  }
+
+  &[data-estado='Por venir'] {
+    background: rgba($colorClaro, 0.15);
+    color: $colorClaro;
+  }
+
+  &[data-estado='En curso'] {
+    background: rgba($colorSupport, 0.15);
+    color: $colorSupport;
+  }
+}
+
+.acciones {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.boton {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1px solid rgba($Dark, 0.25);
+  background: transparent;
+  color: $Dark;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: rgba($Dark, 0.06);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.boton--peligro {
+  border-color: rgba($colorAccent, 0.6);
+  color: $colorAccent;
+
+  &:hover:not(:disabled) {
+    background: rgba($colorAccent, 0.08);
+  }
+}
+
+.vacio {
+  text-align: center;
+  color: rgba($Dark, 0.6);
+  padding: 28px;
+}

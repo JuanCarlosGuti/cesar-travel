@@ -1,0 +1,203 @@
+<section class="admin">
+  <header class="encabezado">
+    <h1>Administración</h1>
+    <p>Todo el sitio: alojamientos, reservas, usuarios y reseñas de cualquier persona.</p>
+  </header>
+
+  @if (error(); as mensaje) {
+    <p class="alerta" role="alert">{{ mensaje }}</p>
+  }
+
+  @if (resumen(); as r) {
+    <dl class="resumen">
+      <div><dt>Usuarios</dt><dd>{{ r.usuarios }}</dd></div>
+      <div><dt>Administradores</dt><dd>{{ r.admins }}</dd></div>
+      <div><dt>Bloqueados</dt><dd>{{ r.bloqueados }}</dd></div>
+      <div><dt>Alojamientos</dt><dd>{{ r.propiedades }}</dd></div>
+      <div><dt>Reservas por venir</dt><dd>{{ r.reservasPorVenir }} <small>de {{ r.reservas }}</small></dd></div>
+      <div><dt>Reseñas</dt><dd>{{ r.resenas }}</dd></div>
+    </dl>
+  }
+
+  <div class="pestanas" role="tablist" aria-label="Secciones del panel">
+    @for (p of pestanas(); track p.id) {
+      <button
+        type="button"
+        role="tab"
+        class="pestana"
+        [class.activa]="pestana() === p.id"
+        [attr.aria-selected]="pestana() === p.id"
+        (click)="pestana.set(p.id)"
+      >
+        {{ p.nombre }} <span class="contador">{{ p.total }}</span>
+      </button>
+    }
+  </div>
+
+  @if (cargando()) {
+    <p class="aviso">Cargando…</p>
+  } @else {
+    <div class="tabla-contenedor" role="tabpanel">
+      @switch (pestana()) {
+        @case ('propiedades') {
+          <table>
+            <thead>
+              <tr><th>Alojamiento</th><th>Ubicación</th><th>Dueño</th><th>Reservas</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (p of propiedades(); track p.id) {
+                <tr>
+                  <td>
+                    <a [routerLink]="['/propiedades', p.id]">{{ p.titulo }}</a>
+                    <small class="secundario">{{ p.categoria.titulo }}</small>
+                  </td>
+                  <td>{{ p.municipio.nombre }}, {{ p.municipio.departamento }}</td>
+                  <td>
+                    @if (p.duenio; as d) {
+                      {{ d.nombre }} {{ d.apellido }}<small class="secundario">{{ d.email }}</small>
+                    } @else {
+                      <span class="secundario">Sin dueño</span>
+                    }
+                  </td>
+                  <td class="numero">{{ p.reservas }}</td>
+                  <td class="acciones">
+                    <a class="boton" [routerLink]="['/publicar', p.id]">Editar</a>
+                    <button
+                      type="button"
+                      class="boton boton--peligro"
+                      [disabled]="ocupado() === 'propiedad-' + p.id"
+                      (click)="eliminarPropiedad(p)"
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="5" class="vacio">No hay alojamientos publicados.</td></tr>
+              }
+            </tbody>
+          </table>
+        }
+
+        @case ('reservas') {
+          <table>
+            <thead>
+              <tr><th>Alojamiento</th><th>Huésped</th><th>Fechas</th><th>Estado</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (r of reservas(); track r.id) {
+                <tr>
+                  <td><a [routerLink]="['/propiedades', r.propiedad.id]">{{ r.propiedad.titulo }}</a></td>
+                  <td>
+                    @if (r.huesped; as h) {
+                      {{ h.nombre }} {{ h.apellido }}<small class="secundario">{{ h.email }}</small>
+                    }
+                  </td>
+                  <td>{{ fecha(r.entrada) }} → {{ fecha(r.salida) }}</td>
+                  <td><span class="etiqueta" [attr.data-estado]="estadoReserva(r)">{{ estadoReserva(r) }}</span></td>
+                  <td class="acciones">
+                    <button
+                      type="button"
+                      class="boton boton--peligro"
+                      [disabled]="ocupado() === 'reserva-' + r.id"
+                      (click)="cancelarReserva(r)"
+                    >
+                      Cancelar
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="5" class="vacio">Todavía no hay reservas.</td></tr>
+              }
+            </tbody>
+          </table>
+        }
+
+        @case ('usuarios') {
+          <table>
+            <thead>
+              <tr><th>Usuario</th><th>Rol</th><th>Estado</th><th>Alojamientos</th><th>Reservas</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (u of usuarios(); track u.id) {
+                <tr [class.bloqueado]="u.bloqueado">
+                  <td>
+                    {{ u.nombre }} {{ u.apellido }}
+                    @if (u.id === miId()) {
+                      <span class="etiqueta">Tú</span>
+                    }
+                    <small class="secundario">{{ u.email }}</small>
+                  </td>
+                  <td><span class="etiqueta" [attr.data-rol]="u.rol">{{ u.rol }}</span></td>
+                  <td>{{ u.bloqueado ? 'Bloqueado' : 'Activo' }}</td>
+                  <td class="numero">{{ u.propiedades }}</td>
+                  <td class="numero">{{ u.reservas }}</td>
+                  <td class="acciones">
+                    <!-- Sobre la propia cuenta no hay acciones: el backend lo rechaza
+                         para que nadie se quede sin acceso por error. -->
+                    @if (u.id !== miId()) {
+                      <button
+                        type="button"
+                        class="boton"
+                        [disabled]="ocupado() === 'usuario-' + u.id"
+                        (click)="cambiarRol(u)"
+                      >
+                        {{ u.rol === 'ADMIN' ? 'Quitar ADMIN' : 'Hacer ADMIN' }}
+                      </button>
+                      <button
+                        type="button"
+                        class="boton"
+                        [class.boton--peligro]="!u.bloqueado"
+                        [disabled]="ocupado() === 'usuario-' + u.id"
+                        (click)="cambiarBloqueo(u)"
+                      >
+                        {{ u.bloqueado ? 'Desbloquear' : 'Bloquear' }}
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+
+        @case ('resenas') {
+          <table>
+            <thead>
+              <tr><th>Alojamiento</th><th>Autor</th><th>Puntaje</th><th>Comentario</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (r of resenas(); track r.id) {
+                <tr>
+                  <td>
+                    <a [routerLink]="['/propiedades', r.propiedad.id]">{{ r.propiedad.titulo }}</a>
+                    <small class="secundario">{{ fecha(r.creadaEn) }}</small>
+                  </td>
+                  <td>
+                    @if (r.autor; as a) {
+                      {{ a.nombre }} {{ a.apellido }}<small class="secundario">{{ a.email }}</small>
+                    }
+                  </td>
+                  <td class="estrellas" [attr.aria-label]="r.puntaje + ' de 5'">{{ estrellas(r.puntaje) }}</td>
+                  <td class="comentario">{{ r.comentario || '—' }}</td>
+                  <td class="acciones">
+                    <button
+                      type="button"
+                      class="boton boton--peligro"
+                      [disabled]="ocupado() === 'resena-' + r.id"
+                      (click)="eliminarResena(r)"
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="5" class="vacio">Todavía no hay reseñas.</td></tr>
+              }
+            </tbody>
+          </table>
+        }
+      }
+    </div>
+  }
+</section>

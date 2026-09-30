@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { Usuario } from './auth/entidades/usuario.entity';
 import { CatalogoModule } from './catalogo/catalogo.module';
@@ -26,6 +27,7 @@ import { SpaModule } from './spa/spa.module';
     ReservasModule,
     ResenasModule,
     ChatModule,
+    AdminModule,
     // Repositorios que necesita el seed.
     TypeOrmModule.forFeature([
       Usuario,

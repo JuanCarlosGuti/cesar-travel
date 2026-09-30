@@ -28,6 +28,15 @@ export class Usuario {
   @Column({ default: 'USER' })
   rol: RolUsuario;
 
+  /**
+   * Una cuenta bloqueada no puede iniciar sesión, y las sesiones que ya tenía dejan de
+   * valer en la siguiente petición (JwtGuard lee la base, no solo el token). Se bloquea
+   * en vez de borrar: borrar se llevaría sus reservas y reseñas, y dejaría sin dueño sus
+   * alojamientos.
+   */
+  @Column({ default: false })
+  bloqueado: boolean;
+
   get nombreCompleto(): string {
     return `${this.nombre} ${this.apellido}`.trim();
   }

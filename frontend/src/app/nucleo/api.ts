@@ -2,6 +2,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
+  AdminPropiedad,
+  AdminResena,
+  AdminReserva,
+  AdminResumen,
+  AdminUsuario,
   Caracteristica,
   Categoria,
   Conversacion,
@@ -205,5 +210,40 @@ export class ApiService {
 
   mensajesSinLeer(): Observable<{ sinLeer: number }> {
     return this.http.get<{ sinLeer: number }>('/api/chats/sin-leer');
+  }
+
+  // Administración (solo ADMIN; el backend responde 403 al resto) ----------
+  // Borrar un alojamiento o cancelar una reserva usan eliminarPropiedad y
+  // cancelarReserva: esos endpoints ya aceptan a un ADMIN.
+
+  adminResumen(): Observable<AdminResumen> {
+    return this.http.get<AdminResumen>('/api/admin/resumen');
+  }
+
+  adminUsuarios(): Observable<AdminUsuario[]> {
+    return this.http.get<AdminUsuario[]>('/api/admin/usuarios');
+  }
+
+  adminCambiarUsuario(
+    id: number,
+    cambio: { rol?: 'USER' | 'ADMIN'; bloqueado?: boolean },
+  ): Observable<AdminUsuario> {
+    return this.http.patch<AdminUsuario>(`/api/admin/usuarios/${id}`, cambio);
+  }
+
+  adminPropiedades(): Observable<AdminPropiedad[]> {
+    return this.http.get<AdminPropiedad[]>('/api/admin/propiedades');
+  }
+
+  adminReservas(): Observable<AdminReserva[]> {
+    return this.http.get<AdminReserva[]>('/api/admin/reservas');
+  }
+
+  adminResenas(): Observable<AdminResena[]> {
+    return this.http.get<AdminResena[]>('/api/admin/resenas');
+  }
+
+  adminEliminarResena(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/admin/resenas/${id}`);
   }
 }
