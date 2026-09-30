@@ -221,7 +221,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña wayuu cerca a las charcas rosadas',
-    foto: pexels(16041157),
+    foto: pexels(33083961),
     descripcion:
       'Cabaña tradicional con chinchorros, atendida por una familia wayuu, a minutos de las charcas rosadas de las salinas de Manaure.',
     direccion: 'Vereda Shiruria, Manaure',
@@ -245,7 +245,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Ranchería tradicional en la Alta Guajira',
-    foto: pexels(13837427),
+    foto: pexels(16041200),
     descripcion:
       'Ranchería con enramada y chinchorros en pleno desierto guajiro. Noches de historias wayuu alrededor del fogón.',
     direccion: 'Vía a Punta Gallinas, Uribia',
@@ -318,7 +318,7 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Finca ganadera con jagüey natural',
-    foto: pexels(14766316),
+    foto: pexels(37843819),
     descripcion:
       'Finca tradicional del Cesar con potreros, arboleda nativa y un jagüey acondicionado como piscina natural. Cabalgatas y ordeño al amanecer.',
     direccion: 'Vía a Codazzi, Valledupar',
