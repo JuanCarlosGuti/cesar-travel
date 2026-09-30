@@ -96,7 +96,7 @@ vez por la contraseña del anfitrión de demostración, que estaba escrita en
   de `main.ts`, antes de que cualquier módulo lea `process.env`.
 - En producción las inyecta la plataforma: `DATABASE_URL`, `JWT_SECRET` y opcionalmente
   `SEED_ADMIN_PASSWORD` (si falta, el seed genera una aleatoria y la loguea una vez).
-- La cuenta sembrada `anfitrion@cesartravel.co` es **ADMIN**: puede editar y borrar
+- La cuenta sembrada `anfitrion@canaguatetravel.com` es **ADMIN**: puede editar y borrar
   cualquier propiedad y ver la identidad de los huéspedes. Su contraseña nunca puede
   quedar en el repositorio ni ser adivinable.
 

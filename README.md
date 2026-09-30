@@ -29,7 +29,7 @@ Abrir **http://localhost:3000** — documentación de la API en `/api/docs` (Swa
 
 La primera vez, la base se crea sola y se siembra con el catálogo de demostración:
 12 municipios, 4 categorías, 28 propiedades y una cuenta de anfitrión
-(`anfitrion@cesartravel.co`) dueña de todas ellas.
+(`anfitrion@canaguatetravel.com`) dueña de todas ellas.
 
 Su contraseña sale de `SEED_ADMIN_PASSWORD` (copiá `backend/.env.example` a
 `backend/.env` y definila). En producción, si no se define, el seed **genera una
