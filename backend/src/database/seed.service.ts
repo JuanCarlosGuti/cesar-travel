@@ -184,9 +184,10 @@ export class SeedService implements OnApplicationBootstrap {
         municipio,
         caracteristicas: serviciosDe(datos.categoria).map(buscarCaracteristica),
       });
-      propiedad.imagenes = [
-        Object.assign(new Imagen(), { titulo: datos.titulo, urlExterna: datos.foto }),
-      ];
+      // En orden: la primera es la portada (el id más bajo; ver imagenesOrdenadas).
+      propiedad.imagenes = datos.fotos.map((url) =>
+        Object.assign(new Imagen(), { titulo: datos.titulo, urlExterna: url }),
+      );
       propiedades.push(propiedad);
     }
 

@@ -105,15 +105,24 @@ export interface PropiedadDemo {
   /** Nombre del municipio o destino; el seed lo resuelve dentro de su departamento. */
   municipio: string;
   departamento: string;
-  /** Foto del alojamiento (se empareja por título, no por posición en la lista). */
-  foto: string;
+  /**
+   * Galería del alojamiento: la primera es la portada (tarjetas y vista previa al
+   * compartir). Cinco porque la ficha muestra una grande y cuatro pequeñas.
+   */
+  fotos: string[];
 }
 
 export const PROPIEDADES: PropiedadDemo[] = [
   // La Guajira ---------------------------------------------------------------
   {
     titulo: 'Apartamento con vista al mar en el Malecón',
-    foto: pexels(12053482),
+    fotos: [
+      pexels(12053482),
+      pexels(34271104),
+      pexels(31817162),
+      pexels(6980671),
+      pexels(8146322),
+    ],
     descripcion:
       'Apartamento fresco con balcón sobre el mar Caribe, a pasos del Malecón de Riohacha y del muelle turístico. Ideal como base para conocer el Santuario de los Flamencos y el Cabo de la Vela.',
     direccion: 'Malecón, Riohacha',
@@ -125,7 +134,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa fresca a cuadras de la playa',
-    foto: pexels(7562736),
+    fotos: [
+      pexels(7562736),
+      pexels(8583599),
+      pexels(37184167),
+      pexels(7174391),
+      pexels(7174408),
+    ],
     descripcion:
       'Casa amplia de un piso con patio sombreado y hamacas, a pocas cuadras de la playa de Riohacha y del mercado nuevo. Perfecta para familias.',
     direccion: 'Barrio El Centro, Riohacha',
@@ -137,7 +152,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña ecológica en la vía a Camarones',
-    foto: pexels(10236126),
+    fotos: [
+      pexels(10236126),
+      pexels(32859024),
+      pexels(14011569),
+      pexels(14011563),
+      pexels(4577673),
+    ],
     descripcion:
       'Cabaña rodeada de trupillos en la vía al Santuario de Fauna y Flora Los Flamencos. Amaneceres con flamencos rosados a 10 minutos.',
     direccion: 'Vía a Camarones, Riohacha',
@@ -149,7 +170,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña frente al mar en Palomino',
-    foto: pexels(32830121),
+    fotos: [
+      pexels(32830121),
+      pexels(33326668),
+      pexels(14025910),
+      pexels(14025911),
+      pexels(4940786),
+    ],
     descripcion:
       'Cabaña de madera y palma a pasos de la playa de Palomino, donde la Sierra Nevada se encuentra con el Caribe. Atardeceres inolvidables desde la hamaca.',
     direccion: 'Playa de Palomino',
@@ -161,7 +188,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa entre el río y el mar',
-    foto: pexels(32643806),
+    fotos: [
+      pexels(32643806),
+      pexels(34277710),
+      pexels(16436925),
+      pexels(16436912),
+      pexels(4916166),
+    ],
     descripcion:
       'Casa tropical a mitad de camino entre el río Palomino y la playa — puedes hacer tubing en el río por la mañana y ver el atardecer en el mar.',
     direccion: 'Km 1 vía al río, Palomino',
@@ -173,7 +206,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa con jardín tropical y hamacas',
-    foto: pexels(18556916),
+    fotos: [
+      pexels(18556916),
+      pexels(11006326),
+      pexels(7969008),
+      pexels(6394574),
+      pexels(6394571),
+    ],
     descripcion:
       'Casa estilo hostal con jardín lleno de palmas, zona de hamacas y cocina abierta. El plan perfecto para desconectarse en Palomino.',
     direccion: 'Calle principal, Palomino',
@@ -185,7 +224,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Ranchería wayuu con vista al mar',
-    foto: pexels(13209625),
+    fotos: [
+      pexels(13209625),
+      pexels(15842116),
+      pexels(2058752),
+      pexels(28352179),
+      pexels(32536507),
+    ],
     descripcion:
       'Alojamiento tradicional wayuu con chinchorros y comida típica, frente al mar turquesa del Cabo de la Vela. Una experiencia auténtica de la Alta Guajira.',
     direccion: 'Cabo de la Vela',
@@ -197,7 +242,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña frente al Pilón de Azúcar',
-    foto: pexels(2106191),
+    fotos: [
+      pexels(2106191),
+      pexels(18851993),
+      pexels(5439495),
+      pexels(7745992),
+      pexels(34208351),
+    ],
     descripcion:
       'Cabaña sencilla con vista directa al Pilón de Azúcar y al mar. Kitesurf, playa ojo de agua y cielos estrellados sin contaminación lumínica.',
     direccion: 'Vía al Pilón, Cabo de la Vela',
@@ -209,7 +260,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa de sal frente a las salinas',
-    foto: pexels(18395588),
+    fotos: [
+      pexels(18395588),
+      pexels(4119832),
+      pexels(29304265),
+      pexels(19899084),
+      pexels(7587812),
+    ],
     descripcion:
       'Casa fresca frente a las salinas de Manaure, con sus montañas de sal blanca y charcas rosadas. Un paisaje único en Colombia.',
     direccion: 'Frente a las salinas, Manaure',
@@ -221,7 +278,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña wayuu cerca a las charcas rosadas',
-    foto: pexels(33083961),
+    fotos: [
+      pexels(33083961),
+      pexels(8279960),
+      pexels(8279958),
+      pexels(8279959),
+      pexels(7746620),
+    ],
     descripcion:
       'Cabaña tradicional con chinchorros, atendida por una familia wayuu, a minutos de las charcas rosadas de las salinas de Manaure.',
     direccion: 'Vereda Shiruria, Manaure',
@@ -233,7 +296,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa del desierto, base para Punta Gallinas',
-    foto: pexels(3660322),
+    fotos: [
+      pexels(3660322),
+      pexels(36758180),
+      pexels(7163597),
+      pexels(29136418),
+      pexels(30767890),
+    ],
     descripcion:
       'Casa de material en el casco urbano de Uribia, la capital indígena de Colombia — el punto de partida ideal para expediciones a Punta Gallinas y Bahía Hondita.',
     direccion: 'Centro, Uribia',
@@ -245,7 +314,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Ranchería tradicional en la Alta Guajira',
-    foto: pexels(16041200),
+    fotos: [
+      pexels(16041200),
+      pexels(24030589),
+      pexels(9056664),
+      pexels(14465275),
+      pexels(17858506),
+    ],
     descripcion:
       'Ranchería con enramada y chinchorros en pleno desierto guajiro. Noches de historias wayuu alrededor del fogón.',
     direccion: 'Vía a Punta Gallinas, Uribia',
@@ -257,7 +332,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa de playa en Dibulla',
-    foto: pexels(14024993),
+    fotos: [
+      pexels(14024993),
+      pexels(14024758),
+      pexels(14024947),
+      pexels(14024987),
+      pexels(14024052),
+    ],
     descripcion:
       'Casa frente al mar en Dibulla, con vista a la Sierra Nevada nevada al amanecer. Playas solas, pescado fresco y tranquilidad total.',
     direccion: 'Playa de Dibulla',
@@ -269,7 +350,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Finca entre el mar y la Sierra Nevada',
-    foto: pexels(32643805),
+    fotos: [
+      pexels(32643805),
+      pexels(34569487),
+      pexels(34569486),
+      pexels(6779229),
+      pexels(28652353),
+    ],
     descripcion:
       'Finca productiva con frutales tropicales entre la playa y las estribaciones de la Sierra Nevada de Santa Marta. Río propio y cacao de la región.',
     direccion: 'Vereda Mingueo, Dibulla',
@@ -282,7 +369,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   // Cesar --------------------------------------------------------------------
   {
     titulo: 'Apartamento moderno cerca a la Plaza Alfonso López',
-    foto: pexels(13004316),
+    fotos: [
+      pexels(13004316),
+      pexels(6585598),
+      pexels(6585599),
+      pexels(8089088),
+      pexels(7214336),
+    ],
     descripcion:
       'Apartamento nuevo a cuadras de la Plaza Alfonso López, el corazón del vallenato. A pasos de restaurantes, la catedral y la casa de los Maestre.',
     direccion: 'Centro, Valledupar',
@@ -294,7 +387,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa vallenata cerca al río Guatapurí',
-    foto: pexels(12785285),
+    fotos: [
+      pexels(12785285),
+      pexels(36394965),
+      pexels(10224313),
+      pexels(271643),
+      pexels(34946215),
+    ],
     descripcion:
       'Casa amplia de un piso, típica del Valle de Upar, a pocas cuadras del balneario Hurtado y la sirena del río Guatapurí. Patio con palo de mango.',
     direccion: 'Barrio Novalito, Valledupar',
@@ -306,7 +405,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Apartamento con piscina en el norte',
-    foto: pexels(12437961),
+    fotos: [
+      pexels(12437961),
+      pexels(28054875),
+      pexels(7511695),
+      pexels(7511693),
+      pexels(6444971),
+    ],
     descripcion:
       'Apartamento en conjunto cerrado con piscina y gimnasio, en la zona norte de Valledupar. Aire acondicionado en todas las habitaciones.',
     direccion: 'Sabanas del Valle, Valledupar',
@@ -318,7 +423,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Finca ganadera con jagüey natural',
-    foto: pexels(37843819),
+    fotos: [
+      pexels(37843819),
+      pexels(31329150),
+      pexels(14399423),
+      pexels(7487005),
+      pexels(30413719),
+    ],
     descripcion:
       'Finca tradicional del Cesar con potreros, arboleda nativa y un jagüey acondicionado como piscina natural. Cabalgatas y ordeño al amanecer.',
     direccion: 'Vía a Codazzi, Valledupar',
@@ -330,7 +441,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa del barrio Cañaguate',
-    foto: pexels(13767145),
+    fotos: [
+      pexels(13767145),
+      pexels(29437170),
+      pexels(23119651),
+      pexels(3935353),
+      pexels(12917082),
+    ],
     descripcion:
       'Casa familiar en el barrio que le da nombre al árbol insignia de la ciudad — en enero florece amarillo entero. Cerca al parque de la Leyenda Vallenata.',
     direccion: 'Barrio Cañaguate, Valledupar',
@@ -342,7 +459,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña de montaña en Pueblo Bello',
-    foto: pexels(8093239),
+    fotos: [
+      pexels(8093239),
+      pexels(30070551),
+      pexels(30070550),
+      pexels(9890650),
+      pexels(9890656),
+    ],
     descripcion:
       'Cabaña con chimenea en el clima frío de Pueblo Bello, la puerta de entrada a la Sierra Nevada. Neblina, café y silencio.',
     direccion: 'Vía a Nabusímake, Pueblo Bello',
@@ -354,7 +477,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Finca cafetera con vista a la Sierra',
-    foto: pexels(35816500),
+    fotos: [
+      pexels(35816500),
+      pexels(38768996),
+      pexels(7601101),
+      pexels(7163599),
+      pexels(14596477),
+    ],
     descripcion:
       'Finca cafetera en las faldas de la Sierra Nevada, con recorridos por los cultivos y café tostado en casa. Comunidad arhuaca vecina.',
     direccion: 'Vereda Las Mercedes, Pueblo Bello',
@@ -366,7 +495,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa campestre a la entrada de la Sierra',
-    foto: pexels(39530048),
+    fotos: [
+      pexels(39530048),
+      pexels(35999954),
+      pexels(33625452),
+      pexels(30708768),
+      pexels(30708770),
+    ],
     descripcion:
       'Casa campestre con jardín de heliconias y vista a las montañas. El punto de partida para caminatas a Nabusímake, capital espiritual arhuaca.',
     direccion: 'Casco urbano, Pueblo Bello',
@@ -378,7 +513,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa tradicional en La Paz',
-    foto: pexels(15020185),
+    fotos: [
+      pexels(15020185),
+      pexels(4590896),
+      pexels(38952769),
+      pexels(38952766),
+      pexels(7061664),
+    ],
     descripcion:
       'Casa de pueblo con techos altos y mecedoras en el corredor, en La Paz — tierra de acordeoneros, a 20 minutos de Valledupar.',
     direccion: 'Centro, La Paz',
@@ -390,7 +531,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Finca con frutales en San Diego',
-    foto: pexels(14541787),
+    fotos: [
+      pexels(14541787),
+      pexels(34134320),
+      pexels(18884372),
+      pexels(26743212),
+      pexels(16436963),
+    ],
     descripcion:
       'Finca con cultivos de mango, guanábana y cítricos en el valle de San Diego. Piscina, kiosco con hamacas y noches de cielo despejado.',
     direccion: 'Vía Media Luna, San Diego',
@@ -402,7 +549,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa de descanso en San Diego',
-    foto: pexels(12865680),
+    fotos: [
+      pexels(12865680),
+      pexels(29818566),
+      pexels(38952727),
+      pexels(17608951),
+      pexels(15555023),
+    ],
     descripcion:
       'Casa tranquila con patio grande y árboles frutales en el pueblo de San Diego, famoso por sus parrandas vallenatas de diciembre.',
     direccion: 'Centro, San Diego',
@@ -414,7 +567,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Cabaña con clima de montaña',
-    foto: pexels(13834229),
+    fotos: [
+      pexels(13834229),
+      pexels(9056665),
+      pexels(9056675),
+      pexels(9056673),
+      pexels(7746626),
+    ],
     descripcion:
       'Cabaña en Manaure Balcón del Cesar, el pueblo con el mejor clima del departamento — 1.300 msnm de frescura en plena serranía del Perijá.',
     direccion: 'Vía al mirador, Manaure Balcón del Cesar',
@@ -426,7 +585,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa mirador del Balcón del Cesar',
-    foto: pexels(16936166),
+    fotos: [
+      pexels(16936166),
+      pexels(39739770),
+      pexels(19737829),
+      pexels(16955580),
+      pexels(16311150),
+    ],
     descripcion:
       'Casa con terraza-mirador sobre el valle del Cesar. Al amanecer se ve el valle entero y al fondo la Sierra Nevada.',
     direccion: 'Alto de la Virgen, Manaure Balcón del Cesar',
@@ -438,7 +603,13 @@ export const PROPIEDADES: PropiedadDemo[] = [
   },
   {
     titulo: 'Casa frente a la Ciénaga de Zapatosa',
-    foto: pexels(36860532),
+    fotos: [
+      pexels(36860532),
+      pexels(6416196),
+      pexels(14495875),
+      pexels(35023110),
+      pexels(35023107),
+    ],
     descripcion:
       'Casa a la orilla de la ciénaga más grande de Colombia. Paseos en canoa, pesca artesanal y atardeceres sobre el agua en Chimichagua.',
     direccion: 'Malecón, Chimichagua',

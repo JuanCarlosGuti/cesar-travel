@@ -11,6 +11,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
+import { Imagen } from '../entidades/imagen.entity';
 import { Propiedad } from '../entidades/propiedad.entity';
 
 // Los largos máximos siguen al formulario (título) o a la columna (descripción,
@@ -99,9 +100,18 @@ export function aResumen(propiedad: Propiedad) {
     banos: propiedad.banos,
     categoria: propiedad.categoria,
     municipio: aUbicacion(propiedad.municipio),
-    imagenPortada: propiedad.imagenes?.[0]?.url ?? propiedad.categoria?.imagenUrl ?? null,
+    imagenPortada: imagenesOrdenadas(propiedad)[0]?.url ?? propiedad.categoria?.imagenUrl ?? null,
     duenioId: propiedad.duenio?.id ?? null,
   };
+}
+
+/**
+ * Las imágenes de la galería en el orden en que se cargaron (por id). La relación se
+ * trae sin ORDER BY y Postgres no garantiza el orden de las filas: sin esto, la portada
+ * (la primera) podía cambiar sola entre una consulta y otra.
+ */
+export function imagenesOrdenadas(propiedad: Propiedad): Imagen[] {
+  return [...(propiedad.imagenes ?? [])].sort((a, b) => a.id - b.id);
 }
 
 export function aDetalle(propiedad: Propiedad) {
@@ -111,7 +121,7 @@ export function aDetalle(propiedad: Propiedad) {
     normas: propiedad.normas,
     saludYSeguridad: propiedad.saludYSeguridad,
     politicaCancelacion: propiedad.politicaCancelacion,
-    imagenes: (propiedad.imagenes ?? []).map((imagen) => ({
+    imagenes: imagenesOrdenadas(propiedad).map((imagen) => ({
       id: imagen.id,
       titulo: imagen.titulo,
       url: imagen.url,

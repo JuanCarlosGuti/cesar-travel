@@ -5,6 +5,7 @@ import type { Request, Response } from 'express';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { Repository } from 'typeorm';
+import { imagenesOrdenadas } from '../propiedades/dto/propiedad.dto';
 import { Propiedad } from '../propiedades/entidades/propiedad.entity';
 
 /** El build de Angular (`npm run build` lo deja en backend/public). */
@@ -113,7 +114,7 @@ export class SpaController {
         this.enviar(req, res, 200, {
           titulo: `${propiedad.titulo} · ${MARCA}`,
           descripcion: resumir(propiedad.descripcion),
-          imagen: propiedad.imagenes?.[0]?.url ?? propiedad.categoria?.imagenUrl ?? null,
+          imagen: imagenesOrdenadas(propiedad)[0]?.url ?? propiedad.categoria?.imagenUrl ?? null,
         });
         return;
       }

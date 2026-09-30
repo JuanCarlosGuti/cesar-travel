@@ -67,8 +67,10 @@ Guajira `#c1502e` (terracota, acentos), Noche `#16283f` (navbar/footer/texto), A
 `apple-touch-icon.png`) son ese mismo árbol: si cambia el logo, se regeneran.
 
 Fotos del catálogo de demostración: **solo Pexels o propias**, nunca de anuncios reales
-(las de Airbnb se quitaron por derechos de autor). Cada alojamiento del seed lleva su
-campo `foto`; cambiar el seed no toca producción, que necesita su propio UPDATE.
+(las de Airbnb se quitaron por derechos de autor). Cada alojamiento del seed lleva `fotos`
+(5: la ficha muestra una grande y cuatro pequeñas; la primera es la portada). El orden de
+la galería es el del id (`imagenesOrdenadas`): la relación se carga sin ORDER BY. Cambiar el
+seed no toca producción, que necesita su propio UPDATE o INSERT.
 
 ## Ubicaciones
 

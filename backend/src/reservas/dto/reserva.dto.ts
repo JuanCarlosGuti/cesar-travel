@@ -1,5 +1,6 @@
 import { IsInt, IsISO8601, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
+import { imagenesOrdenadas } from '../../propiedades/dto/propiedad.dto';
 import { Reserva } from '../entidades/reserva.entity';
 
 // Solo la fecha, sin hora: las reglas comparan yyyy-MM-dd como texto, y un
@@ -43,7 +44,7 @@ export function aReservaResponse(reserva: Reserva) {
         departamento: reserva.propiedad.municipio.departamento?.nombre ?? '',
       },
       imagenPortada:
-        reserva.propiedad.imagenes?.[0]?.url ??
+        imagenesOrdenadas(reserva.propiedad)[0]?.url ??
         reserva.propiedad.categoria?.imagenUrl ??
         null,
     },
