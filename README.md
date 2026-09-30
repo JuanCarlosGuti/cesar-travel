@@ -1,11 +1,11 @@
-# Cañaguate Travel
+# Del Valle al Mar
 
 Plataforma de alojamientos del **Cesar y La Guajira**: catálogo por municipio, búsqueda por
 fechas disponibles, reservas, reseñas de huéspedes y chat interno entre viajero y anfitrión.
 
-En producción: **https://canaguatetravel.com**. El repositorio, los paquetes y la base
-conservan el nombre original del proyecto, `cesar-travel`; la marca visible es Cañaguate
-Travel, por el árbol del logo.
+En producción: **https://delvallealmar.com**. El repositorio, los paquetes y la base
+conservan el nombre original del proyecto, `cesar-travel`; la marca visible es Del Valle
+al Mar. El árbol de cañaguate del logo se quedó como símbolo regional.
 
 Monolito en **NestJS + Angular** (monorepo con npm workspaces): un solo proceso sirve la API
 y el frontend compilado, así que se despliega en cualquier plataforma que corra Node.
@@ -30,7 +30,7 @@ fuera de producción).
 
 La primera vez, la base se crea sola y se siembra con el catálogo de demostración:
 12 municipios, 4 categorías, 28 propiedades y una cuenta de anfitrión
-(`anfitrion@canaguatetravel.com`) dueña de todas ellas.
+(`anfitrion@delvallealmar.com`) dueña de todas ellas.
 
 Su contraseña sale de `SEED_ADMIN_PASSWORD` (copia `backend/.env.example` a
 `backend/.env` y defínela). En producción es **obligatoria**: si falta, el seed falla en
@@ -71,7 +71,7 @@ Para empezar de cero en local: borrar `backend/cesar-travel.db` y arrancar de nu
 
 ## Despliegue
 
-Producción vive en **https://canaguatetravel.com**, en un servidor propio compartido con
+Producción vive en **https://delvallealmar.com**, en un servidor propio compartido con
 otros proyectos, y se despliega con [Kamal 2](https://kamal-deploy.org) según
 [`config/deploy.yml`](config/deploy.yml).
 
@@ -79,7 +79,7 @@ otros proyectos, y se despliega con [Kamal 2](https://kamal-deploy.org) según
   negocio, el build de Angular y el de la imagen ([`Dockerfile`](Dockerfile)); si todo
   pasa, `kamal deploy` sube la imagen a GHCR y reemplaza el contenedor.
 - **kamal-proxy** enruta por dominio, emite el certificado de Let's Encrypt y redirige
-  http → https. `www.canaguatetravel.com` responde con un 301 al dominio raíz; eso lo
+  http → https. `www.delvallealmar.com` responde con un 301 al dominio raíz; eso lo
   hace la app (`backend/src/main.ts`), no el proxy.
 - **DNS** en Cloudflare: registros A hacia el servidor, **solo DNS (nube gris)**. Con el
   proxy de Cloudflare activado, el desafío de Let's Encrypt no llega y el certificado no

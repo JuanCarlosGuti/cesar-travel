@@ -1,12 +1,16 @@
-# Cañaguate Travel — contexto para sesiones de IA
+# Del Valle al Mar — contexto para sesiones de IA
 
 Plataforma de alojamientos del Cesar y La Guajira. Monolito **NestJS + Angular** en un
 monorepo con npm workspaces. Usuario: desarrollador con experiencia en TypeScript/Angular.
 
-**Marca visible: "Cañaguate Travel"** (con ñ; el dominio, `canaguatetravel.com`, sin ella).
-Se llamó "Cesar Travel" hasta el 30/09/2026. El repo, los paquetes, el servicio de Kamal, la
-imagen, la base y las rutas siguen llamándose `cesar-travel` a propósito: se renombró solo lo
-que ve el usuario. No "completar" el renombre en los identificadores.
+**Marca visible: "Del Valle al Mar"** (así, con mayúsculas en Del, Valle y Mar), dominio
+`delvallealmar.com`. Se llamó "Cesar Travel" hasta el 30/09/2026 y ese mismo día, por unas
+horas, "Cañaguate Travel" (canaguatetravel.com): se descartó porque ya existe un operador
+turístico con ese nombre en Valledupar (RNT 177460). **No volver a usar "Cañaguate" como
+nombre**; el árbol del logo sí se quedó, como símbolo regional. El repo, los paquetes, el
+servicio de Kamal, la imagen, la base y las rutas siguen llamándose `cesar-travel` a
+propósito: se renombró solo lo que ve el usuario. No "completar" el renombre en los
+identificadores.
 
 ## Por qué existe esta versión
 
@@ -115,7 +119,7 @@ vez por la contraseña del anfitrión de demostración, que estaba escrita en
   `SEED_ADMIN_PASSWORD`. Sin `JWT_SECRET` la app no arranca (caería al secreto de
   desarrollo, que es público); sin `SEED_ADMIN_PASSWORD`, el seed de una base vacía falla
   en vez de inventar una contraseña de ADMIN y escribirla en los logs.
-- La cuenta sembrada `anfitrion@canaguatetravel.com` es **ADMIN**: puede editar y borrar
+- La cuenta sembrada `anfitrion@delvallealmar.com` es **ADMIN**: puede editar y borrar
   cualquier propiedad y ver la identidad de los huéspedes. Su contraseña nunca puede
   quedar en el repositorio ni ser adivinable.
 
@@ -132,7 +136,7 @@ Servidor propio (159.195.235.225) con **Kamal 2** según `config/deploy.yml`. **
 `main` despliega** desde CI (pruebas → imagen → `kamal deploy`), así que un commit a `main` ya
 es un despliegue a producción.
 
-- Dominio **https://canaguatetravel.com**, más `www`, que la app redirige con 301 al raíz
+- Dominio **https://delvallealmar.com**, más `www`, que la app redirige con 301 al raíz
   (`main.ts`; `--canonical-host` no es clave de deploy.yml). kamal-proxy emite el
   certificado de Let's Encrypt.
 - DNS en Cloudflare con la nube **gris** (solo DNS): con la naranja el certificado no se

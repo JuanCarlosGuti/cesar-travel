@@ -1,12 +1,14 @@
-# cesar-travel en el servidor propio. La marca visible es "Cañaguate Travel";
+# cesar-travel en el servidor propio. La marca visible es "Del Valle al Mar";
 # el servicio, la imagen, el repo y la base siguen llamándose cesar-travel.
 #
 # UNA sola aplicación de Kamal, a diferencia de UparYa y crearcodecesar: NestJS
 # sirve el Angular ya construido desde backend/public, así que hay un solo
 # proceso, un solo puerto y un solo origen.
 #
-# Dominio canaguatetravel.com con HTTPS desde el 30/09/2026. Antes se sirvió
-# por IP, sin host y sin TLS (decisión del 20/08/2026). Ver la sección
+# Dominio delvallealmar.com con HTTPS. Antes se sirvió por IP, sin host y sin
+# TLS (decisión del 20/08/2026), y por unas horas del 30/09/2026 en
+# canaguatetravel.com, que se abandonó por un conflicto de marca con un operador
+# de Valledupar y vence solo: no se vuelve a declarar aquí. Ver la sección
 # "Dominio y HTTPS" al final antes de cambiar nada de `proxy`.
 service: cesar-travel
 image: juancarlosguti/cesar-travel
@@ -30,8 +32,8 @@ proxy:
   # apunten al servidor sin estar declarados en otro servicio. Es lo que se
   # quiere: un nombre mal apuntado da error en vez de mostrar este sitio.
   hosts:
-    - canaguatetravel.com
-    - www.canaguatetravel.com
+    - delvallealmar.com
+    - www.delvallealmar.com
   # Certificado de Let's Encrypt, que kamal-proxy pide solo. Con ssl, además,
   # redirige http → https.
   ssl: true
@@ -108,8 +110,8 @@ env:
 # ---------------------------------------------------------------------------
 #
 # DNS en Cloudflare, SOLO DNS (nube gris):
-#   A  canaguatetravel.com      → 159.195.235.225
-#   A  www.canaguatetravel.com  → 159.195.235.225
+#   A  delvallealmar.com      → 159.195.235.225
+#   A  www.delvallealmar.com  → 159.195.235.225
 # Con la nube naranja (proxy de Cloudflare), el desafío de Let's Encrypt no
 # llega a kamal-proxy y el certificado no se emite.
 #
