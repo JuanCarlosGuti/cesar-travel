@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Ícono de marca de Cesar Travel — árbol de cañaguate estilizado.
+ * Ícono de marca de Cañaguate Travel — árbol de cañaguate estilizado.
  *
  * No define tamaño propio: el host es inline-flex y el SVG lo llena, así que
  * el contenedor manda (`app-canaguate-mark { width: 40px }`, una clase, etc.).
@@ -24,5 +24,5 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class CanaguateMarkComponent {
   /** Texto accesible del ícono; se expone como aria-label del SVG. */
-  readonly title = input('Cesar Travel');
+  readonly title = input('Cañaguate Travel');
 }

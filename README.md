@@ -1,7 +1,11 @@
-# Cesar Travel
+# Cañaguate Travel
 
 Plataforma de alojamientos del **Cesar y La Guajira**: catálogo por municipio, búsqueda por
 fechas disponibles, reservas, reseñas de huéspedes y chat interno entre viajero y anfitrión.
+
+En producción: **https://canaguatetravel.com**. El repositorio, los paquetes y la base
+conservan el nombre original del proyecto, `cesar-travel`; la marca visible es Cañaguate
+Travel, por el árbol del logo.
 
 Monolito en **NestJS + Angular** (monorepo con npm workspaces): un solo proceso sirve la API
 y el frontend compilado, así que se despliega en cualquier plataforma que corra Node.
@@ -59,22 +63,30 @@ Para empezar de cero en local: borrar `backend/cesar-travel.db` y arrancar de nu
 | `JWT_EXPIRACION` | Vigencia del token | `8h` |
 | `PORT` | Puerto del servidor | `3000` |
 | `CORS_ORIGENES` | Orígenes permitidos, separados por coma | sin CORS (mismo origen) |
+| `DATABASE_SSL` | `false` para conectar a Postgres sin TLS | con TLS |
 
-## Despliegue (Render + Neon, plan gratuito)
+## Despliegue
 
-1. **Base de datos**: crear un proyecto en [Neon](https://neon.tech) (Postgres gratuito y
-   permanente) y copiar su cadena de conexión.
-2. **Servicio**: en [Render](https://render.com) → **New → Blueprint** → elegir este repo.
-   Render lee [`render.yaml`](render.yaml) y pide dos valores:
-   - `DATABASE_URL`: la cadena de Neon.
-   - `JWT_SECRET`: generar con `openssl rand -base64 32`.
-3. **Apply**. El primer build tarda unos minutos; al terminar queda la URL pública. El
-   catálogo se siembra solo la primera vez que arranca contra la base vacía.
+Producción vive en **https://canaguatetravel.com**, en un servidor propio compartido con
+otros proyectos, y se despliega con [Kamal 2](https://kamal-deploy.org) según
+[`config/deploy.yml`](config/deploy.yml).
 
-Cada `git push` a `main` redespliega automáticamente.
+- **Cada push a `main` despliega.** El workflow de CI corre las pruebas de reglas de
+  negocio, el build de Angular y el de la imagen ([`Dockerfile`](Dockerfile)); si todo
+  pasa, `kamal deploy` sube la imagen a GHCR y reemplaza el contenedor.
+- **kamal-proxy** enruta por dominio, emite el certificado de Let's Encrypt y redirige
+  http → https. `www.canaguatetravel.com` responde con un 301 al dominio raíz; eso lo
+  hace la app (`backend/src/main.ts`), no el proxy.
+- **DNS** en Cloudflare: registros A hacia el servidor, **solo DNS (nube gris)**. Con el
+  proxy de Cloudflare activado, el desafío de Let's Encrypt no llega y el certificado no
+  se emite.
+- **Postgres** es el del servidor, con rol y base propios (`cesartravel`). No sale de la
+  red interna de Docker, por eso `DATABASE_SSL=false`.
+- **Secretos** del repositorio en GitHub: `SSH_PRIVATE_KEY`, `DATABASE_URL`, `JWT_SECRET`
+  y `SEED_ADMIN_PASSWORD`. `.kamal/secrets` se versiona porque solo tiene referencias.
 
-Limitación del plan gratuito: el servicio se duerme tras ~15 minutos sin visitas y la
-siguiente petición tarda ~50 segundos en despertarlo.
+`render.yaml` quedó de la etapa en Render + Neon (plan gratuito) y ya no es el despliegue
+de producción.
 
 ## Funcionalidades
 

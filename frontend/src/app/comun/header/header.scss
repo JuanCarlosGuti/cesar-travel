@@ -40,7 +40,11 @@
 
 .marca__texto {
   font-family: $fontSerif;
-  font-size: 1.6rem;
+  // Tamaño completo desde ~430px; por debajo baja con el ancho. "Cañaguate Travel"
+  // en 1.6rem fijo empuja la hamburguesa fuera de pantalla a 320px, y $fontSerif es
+  // una pila del sistema: en Android cae a Noto Serif, más ancha que la Palatino con
+  // que se ve en Windows, así que el margen no se puede medir en un solo equipo.
+  font-size: min(1.6rem, 6vw);
   font-weight: 700;
   letter-spacing: 0.5px;
   color: $colorFondo;

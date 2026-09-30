@@ -1,7 +1,12 @@
-# Cesar Travel — contexto para sesiones de IA
+# Cañaguate Travel — contexto para sesiones de IA
 
 Plataforma de alojamientos del Cesar y La Guajira. Monolito **NestJS + Angular** en un
 monorepo con npm workspaces. Usuario: desarrollador con experiencia en TypeScript/Angular.
+
+**Marca visible: "Cañaguate Travel"** (con ñ; el dominio, `canaguatetravel.com`, sin ella).
+Se llamó "Cesar Travel" hasta el 30/09/2026. El repo, los paquetes, el servicio de Kamal, la
+imagen, la base y las rutas siguen llamándose `cesar-travel` a propósito: se renombró solo lo
+que ve el usuario. No "completar" el renombre en los identificadores.
 
 ## Por qué existe esta versión
 
@@ -10,6 +15,7 @@ Es la reescritura como monolito de un proyecto que también existe **en microser
 versión se conserva intacta como pieza de arquitectura para un despliegue con infraestructura
 propia; esta se hizo para poder publicarla en hosting gratuito (Render), donde 6 servicios
 Java + MySQL no entran. **Misma funcionalidad, mismo catálogo, misma identidad visual.**
+Hoy ya no corre en Render sino en un servidor propio (ver "Despliegue").
 
 ## Stack y decisiones
 
@@ -103,7 +109,21 @@ vez por la contraseña del anfitrión de demostración, que estaba escrita en
 
 ## Despliegue
 
-`render.yaml` (blueprint de Render, plan gratuito) + Postgres en Neon. Build y start desde la
-raíz del monorepo (workspaces: instalar por subcarpeta rompe la resolución de módulos).
-`NODE_VERSION` debe ser >= 24.15.0 (la CLI de Angular rechaza versiones menores). Secretos
-que se cargan en el dashboard: `DATABASE_URL` y `JWT_SECRET`.
+Servidor propio (159.195.235.225) con **Kamal 2** según `config/deploy.yml`. **Cada push a
+`main` despliega** desde CI (pruebas → imagen → `kamal deploy`), así que un commit a `main` ya
+es un despliegue a producción.
+
+- Dominio **https://canaguatetravel.com**, más `www`, que la app redirige con 301 al raíz
+  (`main.ts`; `--canonical-host` no es clave de deploy.yml). kamal-proxy emite el
+  certificado de Let's Encrypt.
+- DNS en Cloudflare con la nube **gris** (solo DNS): con la naranja el certificado no se
+  emite. Un nombre nuevo en `hosts:` se despliega solo después de que resuelva a la IP.
+- `forward_headers: false` va siempre explícito (su valor por omisión cambia con `ssl`), y
+  la app confía solo en proxies de red privada (`trust proxy` en `main.ts`).
+- El servidor es de **producción compartida** con otras apps: no reiniciar kamal-proxy ni
+  tocar la configuración de las demás.
+- Secretos en GitHub: `SSH_PRIVATE_KEY`, `DATABASE_URL`, `JWT_SECRET`, `SEED_ADMIN_PASSWORD`.
+
+`render.yaml` es de la etapa anterior (Render + Neon). Build y start siempre desde la raíz del
+monorepo (workspaces: instalar por subcarpeta rompe la resolución de módulos). Node >= 24.15.0
+(la CLI de Angular rechaza versiones menores).

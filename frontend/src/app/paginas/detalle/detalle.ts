@@ -182,7 +182,7 @@ export class DetalleComponent {
 
   compartir(): void {
     const url = window.location.href;
-    const titulo = this.propiedad()?.titulo ?? 'Cesar Travel';
+    const titulo = this.propiedad()?.titulo ?? 'Cañaguate Travel';
 
     if (navigator.share) {
       navigator.share({ title: titulo, url }).catch(() => {

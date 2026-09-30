@@ -2,7 +2,7 @@
   "name": "cesar-travel",
   "version": "1.0.0",
   "private": true,
-  "description": "Cesar Travel — alojamientos en el Cesar y La Guajira (monolito NestJS + Angular)",
+  "description": "Cañaguate Travel — alojamientos en el Cesar y La Guajira (monolito NestJS + Angular)",
   "workspaces": [
     "backend",
     "frontend"
