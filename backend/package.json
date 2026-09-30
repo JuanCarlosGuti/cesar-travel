@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "API de Cañaguate Travel — sirve también el frontend Angular compilado",
+  "description": "API de Del Valle al Mar — sirve también el frontend Angular compilado",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

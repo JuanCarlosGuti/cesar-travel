@@ -10,7 +10,7 @@ import { Propiedad } from '../propiedades/entidades/propiedad.entity';
 /** El build de Angular (`npm run build` lo deja en backend/public). */
 export const CARPETA_PUBLICA = join(__dirname, '..', '..', 'public');
 
-const MARCA = 'Cañaguate Travel';
+const MARCA = 'Del Valle al Mar';
 
 /*
  * Rutas que existen en la SPA (frontend/src/app/app.routes.ts; si se agrega una allá,
@@ -147,7 +147,7 @@ export class SpaController {
   }
 }
 
-/** https://canaguatetravel.com — con `trust proxy`, protocolo y host son los del visitante. */
+/** https://<dominio> — con `trust proxy`, protocolo y host son los del visitante. */
 function origenDe(req: Request): string {
   return `${req.protocol}://${req.get('host') ?? req.hostname}`;
 }

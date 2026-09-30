@@ -491,8 +491,8 @@ export const PROPIEDADES: PropiedadDemo[] = [
  */
 export const ANFITRION_DEMO = {
   nombre: 'Anfitrión',
-  apellido: 'Cañaguate Travel',
-  email: 'anfitrion@canaguatetravel.com',
+  apellido: 'Del Valle al Mar',
+  email: 'anfitrion@delvallealmar.com',
   telefono: '3001234567',
   rol: 'ADMIN' as const,
 };

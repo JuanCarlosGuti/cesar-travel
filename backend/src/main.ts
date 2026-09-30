@@ -110,7 +110,7 @@ async function bootstrap(): Promise<void> {
       SwaggerModule.createDocument(
         app,
         new DocumentBuilder()
-          .setTitle('Cañaguate Travel API')
+          .setTitle('Del Valle al Mar API')
           .setDescription(
             'Alojamientos en el Cesar y La Guajira: catálogo, reservas, reseñas y chat.',
           )
@@ -125,7 +125,7 @@ async function bootstrap(): Promise<void> {
   const puerto = Number(process.env.PORT) || 3000;
   await app.listen(puerto);
   console.log(
-    `Cañaguate Travel escuchando en http://localhost:${puerto}` +
+    `Del Valle al Mar escuchando en http://localhost:${puerto}` +
       (produccion ? '' : ' (docs en /api/docs)'),
   );
 }
